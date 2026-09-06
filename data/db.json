@@ -186,6 +186,17 @@
       "monthlyIncomeTarget": 25000000,
       "createdAt": "2026-09-06T14:46:29.706Z",
       "updatedAt": "2026-09-06T14:46:29.706Z"
+    },
+    {
+      "_id": "user_1788710285837_prvpvai",
+      "name": "ninhnguyen",
+      "email": "ninh@gmail.com",
+      "password": "$2b$10$iwAonPAWY9Bom69Vq/kl8ODk3OcXumKP/tHyBveRQr4E4oDUaT8Bi",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T15:58:05.837Z",
+      "updatedAt": "2026-09-06T15:58:05.837Z"
     }
   ],
   "transactions": [

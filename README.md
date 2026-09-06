@@ -1,25 +1,24 @@
-<<<<<<< HEAD
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 💰 Quản Lý Chi Tiêu Cá Nhân - Expense Tracker
 
-# Run and deploy your AI Studio app
+Website quản lý chi tiêu cá nhân với React, Express, MongoDB và Gemini AI.
 
-This contains everything you need to run your app locally.
+## 🚀 Công nghệ sử dụng
+- **Frontend:** React 19, TypeScript, Tailwind CSS 4, Recharts
+- **Backend:** Node.js, Express, MongoDB, JWT
+- **AI:** Google Gemini API
 
-View your app in AI Studio: https://ai.studio/apps/75b479d5-31b6-4586-88a6-fde95bde7092
+## 📦 Cài đặt và chạy
 
-## Run Locally
+```bash
+# 1. Clone repository
+git clone https://github.com/ninh1707/expense-tracker.git
+cd expense-tracker
 
-**Prerequisites:**  Node.js
+# 2. Cài dependencies
+npm install
 
+# 3. Tạo file .env
+cp .env.example .env
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
-=======
-# expense-tracker
-Website quản lý chi tiêu cá nhân
->>>>>>> 87506f1eb392c776f14d86a5c72686b391df24b4
+# 4. Chạy development
+npm run dev
