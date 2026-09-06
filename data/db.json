@@ -1,0 +1,1120 @@
+{
+  "users": [
+    {
+      "_id": "user_1788704969663_u44b6cl",
+      "name": "Nguyễn Văn An",
+      "email": "demo@taichinh.vn",
+      "password": "$2b$10$ljrbISSjapxC8WE6v7VcFe14FyRTL.aynmToJROaMW9Zgm8zf9WLC",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 30000000,
+      "createdAt": "2026-09-06T14:29:29.663Z",
+      "updatedAt": "2026-09-06T14:29:29.663Z"
+    },
+    {
+      "_id": "user_1788705116073_qqccmjp",
+      "name": "Nguyễn Văn Kiểm Tra",
+      "email": "testuser_1788705115966@example.com",
+      "password": "$2b$10$tKE.5XsorpyI76hb.REyieEDzAdb9tv0uAJL0ED6EHhLKCnpoRXY6",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:31:56.073Z",
+      "updatedAt": "2026-09-06T14:31:56.073Z"
+    },
+    {
+      "_id": "user_1788705136606_ynpjqp8",
+      "name": "Nguyễn Văn Kiểm Tra",
+      "email": "testuser_1788705136505@example.com",
+      "password": "$2b$10$2MEIDvi3w9L5LLQj7KNcmOrXDMMG/g5unZOQoG18e3AKLgBdGQE5K",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:32:16.606Z",
+      "updatedAt": "2026-09-06T14:32:16.606Z"
+    },
+    {
+      "_id": "user_1788705156939_vy66rut",
+      "name": "Nguyễn Văn Kiểm Tra",
+      "email": "testuser_1788705156837@example.com",
+      "password": "$2b$10$baNrOWaulKwi6EN68KA1VeaYQYwuKfn9zLXyAyLTxqKWDr9HYeOKu",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:32:36.939Z",
+      "updatedAt": "2026-09-06T14:32:36.939Z"
+    },
+    {
+      "_id": "user_1788705176765_atr3422",
+      "name": "Nguyễn Văn Kiểm Tra",
+      "email": "testuser_1788705176666@example.com",
+      "password": "$2b$10$prWYgiTksHyF4FW3MItCz.qL.uJfSvt0BI5jYTm/hXSMRYd0KaqQK",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:32:56.765Z",
+      "updatedAt": "2026-09-06T14:32:56.765Z"
+    },
+    {
+      "_id": "user_1788705195716_b6oe83g",
+      "name": "Nguyễn Văn Kiểm Tra",
+      "email": "testuser_1788705195624@example.com",
+      "password": "$2b$10$oOJ.x.Hr4YMMNqxWur05JOp4TqH2BkFFuSLI9j7lf9tuXbU39eSWi",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:33:15.716Z",
+      "updatedAt": "2026-09-06T14:33:15.716Z"
+    },
+    {
+      "_id": "user_1788705205097_wpzpv5x",
+      "name": "Nguyễn Văn Kiểm Tra",
+      "email": "testuser_1788705204960@example.com",
+      "password": "$2b$10$Cf4LxNR2TNYNWowRh9uC6.iRJ8O75py58KlfTGzewo0MlkrAXkPB.",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:33:25.097Z",
+      "updatedAt": "2026-09-06T14:33:25.097Z"
+    },
+    {
+      "_id": "user_1788705276340_f8nvv6b",
+      "name": "Nguyễn Văn Kiểm Tra",
+      "email": "testuser_1788705276249@example.com",
+      "password": "$2b$10$ks80UcxX9mNp/UTh04dC2Oc.QG2lar4Gylfx7uCiHbnMgTo71U2EO",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:34:36.340Z",
+      "updatedAt": "2026-09-06T14:34:36.340Z"
+    },
+    {
+      "_id": "user_1788705375733_1u9qsm0",
+      "name": "ninhden113",
+      "email": "ninhden113@gmail.com",
+      "password": "$2b$10$So5IFDRihQVezVIzuKFQTO4iGMJOc0/N7Ubi9JLLQX9OtTMwlFpHi",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:36:15.733Z",
+      "updatedAt": "2026-09-06T14:36:15.733Z"
+    },
+    {
+      "_id": "user_1788705869059_980crf7",
+      "name": "Kiểm Thử Viên",
+      "email": "test_audit_1788705868956@test.vn",
+      "password": "$2b$10$8xPW1PXy7Q4QmRHc2JVjmONLV2cy8E0/a5wUhAmIqDrEhrSF4eDD.",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:44:29.059Z",
+      "updatedAt": "2026-09-06T14:44:29.059Z"
+    },
+    {
+      "_id": "user_1788705869179_5ulkpui",
+      "name": "Test",
+      "email": "abc@",
+      "password": "$2b$10$VZNA3p8x3pFiRkBxSdz.iOnYF1k0zpIUZVfgdKegCRfkcxaBuAH3e",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:44:29.179Z",
+      "updatedAt": "2026-09-06T14:44:29.179Z"
+    },
+    {
+      "_id": "user_1788705888384_onu9ws2",
+      "name": "Kiểm Thử Viên",
+      "email": "test_audit_1788705888257@test.vn",
+      "password": "$2b$10$8Y6Rtw85/vqVfwwbCQrhu.fGop7xQugiS1rJLmsmsFP2NiIz6gx5C",
+      "currency": "USD",
+      "language": "en",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:44:48.384Z",
+      "updatedAt": "2026-09-06T14:44:49.378Z"
+    },
+    {
+      "_id": "user_1788705889581_rt6sag2",
+      "name": "Người Dùng Khác",
+      "email": "other_1788705889492@test.vn",
+      "password": "$2b$10$VRiW5GpiFIQRODcVp.UlmeB6frX7ACR99SSeCTJFcnHvlWYCbzx52",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:44:49.581Z",
+      "updatedAt": "2026-09-06T14:44:49.581Z"
+    },
+    {
+      "_id": "user_1788705961221_jnna9mq",
+      "name": "Kiểm Thử Viên",
+      "email": "test_audit_1788705961118@test.vn",
+      "password": "$2b$10$wo07eGsA5f80QCZPvNAjYuCd4xHsQZPGGOiSsjSBclY/.b/a4rx0e",
+      "currency": "USD",
+      "language": "en",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:46:01.221Z",
+      "updatedAt": "2026-09-06T14:46:01.759Z"
+    },
+    {
+      "_id": "user_1788705961994_k88com2",
+      "name": "Người Dùng Khác",
+      "email": "other_1788705961875@test.vn",
+      "password": "$2b$10$OfgpUqVeR3foYUEbqy.4femx4A8P8S1Fb0dBBsGx2qfszP6sAqDPi",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:46:01.994Z",
+      "updatedAt": "2026-09-06T14:46:01.994Z"
+    },
+    {
+      "_id": "user_1788705988878_xvuu6xk",
+      "name": "Kiểm Thử Viên",
+      "email": "test_audit_1788705988751@test.vn",
+      "password": "$2b$10$vTiNIA31qWR3GF4WpdYj0eXKUW4.2cecF/7eSbqV8KE6IrFKBae0q",
+      "currency": "USD",
+      "language": "en",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:46:28.878Z",
+      "updatedAt": "2026-09-06T14:46:29.464Z"
+    },
+    {
+      "_id": "user_1788705989706_9zyk0wl",
+      "name": "Người Dùng Khác",
+      "email": "other_1788705989608@test.vn",
+      "password": "$2b$10$qvZRuYH/u6ub/EPpx4ueWuHOAuq1.3yHK1tlYkwReeXMeJABCHtLy",
+      "currency": "VND",
+      "language": "vi",
+      "monthlyIncomeTarget": 25000000,
+      "createdAt": "2026-09-06T14:46:29.706Z",
+      "updatedAt": "2026-09-06T14:46:29.706Z"
+    }
+  ],
+  "transactions": [
+    {
+      "_id": "tx_1788704969664_no3idma",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "income",
+      "amount": 28000000,
+      "category": "salary",
+      "date": "2026-09-05",
+      "description": "Lương tháng công ty công nghệ",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "cố định",
+        "lương"
+      ],
+      "createdAt": "2026-09-06T14:29:29.664Z",
+      "updatedAt": "2026-09-06T14:29:29.664Z"
+    },
+    {
+      "_id": "tx_1788704969664_oxev4w0",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "income",
+      "amount": 4500000,
+      "category": "freelance",
+      "date": "2026-09-12",
+      "description": "Thiết kế website freelance",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "thêm"
+      ],
+      "createdAt": "2026-09-06T14:29:29.664Z",
+      "updatedAt": "2026-09-06T14:29:29.664Z"
+    },
+    {
+      "_id": "tx_1788704969664_5yt7fp1",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "income",
+      "amount": 1200000,
+      "category": "investment",
+      "date": "2026-09-18",
+      "description": "Cổ tức chứng khoán",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "đầu tư"
+      ],
+      "createdAt": "2026-09-06T14:29:29.664Z",
+      "updatedAt": "2026-09-06T14:29:29.664Z"
+    },
+    {
+      "_id": "tx_1788704969664_8xl173y",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 4500000,
+      "category": "bills",
+      "date": "2026-09-02",
+      "description": "Tiền thuê căn hộ tháng này",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "cố định",
+        "nhà"
+      ],
+      "createdAt": "2026-09-06T14:29:29.664Z",
+      "updatedAt": "2026-09-06T14:29:29.664Z"
+    },
+    {
+      "_id": "tx_1788704969664_7zctveg",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 850000,
+      "category": "bills",
+      "date": "2026-09-04",
+      "description": "Tiền điện & nước sinh hoạt",
+      "paymentMethod": "e_wallet",
+      "tags": [
+        "hóa đơn"
+      ],
+      "createdAt": "2026-09-06T14:29:29.664Z",
+      "updatedAt": "2026-09-06T14:29:29.664Z"
+    },
+    {
+      "_id": "tx_1788704969664_wktwja5",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 250000,
+      "category": "bills",
+      "date": "2026-09-05",
+      "description": "Cước Internet cáp quang FPT",
+      "paymentMethod": "e_wallet",
+      "tags": [
+        "mạng"
+      ],
+      "createdAt": "2026-09-06T14:29:29.664Z",
+      "updatedAt": "2026-09-06T14:29:29.664Z"
+    },
+    {
+      "_id": "tx_1788704969665_7b6labz",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 320000,
+      "category": "food",
+      "date": "2026-09-06",
+      "description": "Đi siêu thị WinMart cuối tuần",
+      "paymentMethod": "credit_card",
+      "tags": [
+        "thực phẩm"
+      ],
+      "createdAt": "2026-09-06T14:29:29.665Z",
+      "updatedAt": "2026-09-06T14:29:29.665Z"
+    },
+    {
+      "_id": "tx_1788704969665_q4j8hot",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 65000,
+      "category": "food",
+      "date": "2026-09-08",
+      "description": "Cà phê sáng Highlands Coffee",
+      "paymentMethod": "cash",
+      "tags": [
+        "cà phê"
+      ],
+      "createdAt": "2026-09-06T14:29:29.665Z",
+      "updatedAt": "2026-09-06T14:29:29.665Z"
+    },
+    {
+      "_id": "tx_1788704969665_9tofjlr",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 150000,
+      "category": "transport",
+      "date": "2026-09-09",
+      "description": "Đổ xăng xe máy Petrolimex",
+      "paymentMethod": "cash",
+      "tags": [
+        "xăng"
+      ],
+      "createdAt": "2026-09-06T14:29:29.665Z",
+      "updatedAt": "2026-09-06T14:29:29.665Z"
+    },
+    {
+      "_id": "tx_1788704969665_lko4cyg",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 480000,
+      "category": "food",
+      "date": "2026-09-11",
+      "description": "Ăn tối liên hoan bạn bè Pizza 4P's",
+      "paymentMethod": "credit_card",
+      "tags": [
+        "bạn bè"
+      ],
+      "createdAt": "2026-09-06T14:29:29.665Z",
+      "updatedAt": "2026-09-06T14:29:29.665Z"
+    },
+    {
+      "_id": "tx_1788704969666_guovr22",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 1250000,
+      "category": "shopping",
+      "date": "2026-09-14",
+      "description": "Mua giày thể thao chạy bộ mới",
+      "paymentMethod": "credit_card",
+      "tags": [
+        "thể thao"
+      ],
+      "createdAt": "2026-09-06T14:29:29.665Z",
+      "updatedAt": "2026-09-06T14:29:29.665Z"
+    },
+    {
+      "_id": "tx_1788704969666_10h3wdj",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 300000,
+      "category": "health",
+      "date": "2026-09-16",
+      "description": "Thuốc bổ và vitamin tổng hợp",
+      "paymentMethod": "e_wallet",
+      "tags": [
+        "sức khỏe"
+      ],
+      "createdAt": "2026-09-06T14:29:29.666Z",
+      "updatedAt": "2026-09-06T14:29:29.666Z"
+    },
+    {
+      "_id": "tx_1788704969666_lex9nvu",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 1500000,
+      "category": "education",
+      "date": "2026-09-20",
+      "description": "Khóa học tiếng Anh giao tiếp Udemy",
+      "paymentMethod": "credit_card",
+      "tags": [
+        "học tập"
+      ],
+      "createdAt": "2026-09-06T14:29:29.666Z",
+      "updatedAt": "2026-09-06T14:29:29.666Z"
+    },
+    {
+      "_id": "tx_1788704969666_73odgsd",
+      "userId": "user_1788704969663_u44b6cl",
+      "type": "expense",
+      "amount": 220000,
+      "category": "entertainment",
+      "date": "2026-09-22",
+      "description": "Vé xem phim CGV IMAX cuối tuần",
+      "paymentMethod": "e_wallet",
+      "tags": [
+        "giải trí"
+      ],
+      "createdAt": "2026-09-06T14:29:29.666Z",
+      "updatedAt": "2026-09-06T14:29:29.666Z"
+    },
+    {
+      "_id": "tx_1788705136706_94czdpm",
+      "type": "income",
+      "amount": 16000000,
+      "category": "Lương",
+      "date": "2026-09-01",
+      "description": "Nhận lương tháng 9 + thưởng KPI",
+      "paymentMethod": "bank_transfer",
+      "userId": "user_1788705136606_ynpjqp8",
+      "createdAt": "2026-09-06T14:32:16.706Z",
+      "updatedAt": "2026-09-06T14:32:16.713Z"
+    },
+    {
+      "_id": "tx_1788705136710_15ofgza",
+      "type": "expense",
+      "amount": 2500000,
+      "category": "Ăn uống",
+      "date": "2026-09-02",
+      "description": "Tiệc liên hoan cuối tuần",
+      "paymentMethod": "e_wallet",
+      "userId": "user_1788705136606_ynpjqp8",
+      "createdAt": "2026-09-06T14:32:16.710Z",
+      "updatedAt": "2026-09-06T14:32:16.710Z"
+    },
+    {
+      "_id": "tx_1788705157043_ks27pf0",
+      "type": "income",
+      "amount": 16000000,
+      "category": "Lương",
+      "date": "2026-09-01",
+      "description": "Nhận lương tháng 9 + thưởng KPI",
+      "paymentMethod": "bank_transfer",
+      "userId": "user_1788705156939_vy66rut",
+      "createdAt": "2026-09-06T14:32:37.043Z",
+      "updatedAt": "2026-09-06T14:32:37.050Z"
+    },
+    {
+      "_id": "tx_1788705157047_qn9bjbd",
+      "type": "expense",
+      "amount": 2500000,
+      "category": "Ăn uống",
+      "date": "2026-09-02",
+      "description": "Tiệc liên hoan cuối tuần",
+      "paymentMethod": "e_wallet",
+      "userId": "user_1788705156939_vy66rut",
+      "createdAt": "2026-09-06T14:32:37.047Z",
+      "updatedAt": "2026-09-06T14:32:37.047Z"
+    },
+    {
+      "_id": "tx_1788705176866_87t845i",
+      "type": "income",
+      "amount": 16000000,
+      "category": "Lương",
+      "date": "2026-09-01",
+      "description": "Nhận lương tháng 9 + thưởng KPI",
+      "paymentMethod": "bank_transfer",
+      "userId": "user_1788705176765_atr3422",
+      "createdAt": "2026-09-06T14:32:56.866Z",
+      "updatedAt": "2026-09-06T14:32:56.873Z"
+    },
+    {
+      "_id": "tx_1788705176869_px7juzj",
+      "type": "expense",
+      "amount": 2500000,
+      "category": "Ăn uống",
+      "date": "2026-09-02",
+      "description": "Tiệc liên hoan cuối tuần",
+      "paymentMethod": "e_wallet",
+      "userId": "user_1788705176765_atr3422",
+      "createdAt": "2026-09-06T14:32:56.869Z",
+      "updatedAt": "2026-09-06T14:32:56.869Z"
+    },
+    {
+      "_id": "tx_1788705176925_z3bksap",
+      "userId": "user_1788705176765_atr3422",
+      "type": "expense",
+      "amount": 2000000,
+      "category": "savings",
+      "date": "2026-09-06",
+      "description": "Tích lũy: Quỹ du lịch Đà Lạt",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "tiết kiệm",
+        "Quỹ du lịch Đà Lạt"
+      ],
+      "createdAt": "2026-09-06T14:32:56.925Z",
+      "updatedAt": "2026-09-06T14:32:56.925Z"
+    },
+    {
+      "_id": "tx_1788705195816_52iqqyv",
+      "type": "income",
+      "amount": 16000000,
+      "category": "Lương",
+      "date": "2026-09-01",
+      "description": "Nhận lương tháng 9 + thưởng KPI",
+      "paymentMethod": "bank_transfer",
+      "userId": "user_1788705195716_b6oe83g",
+      "createdAt": "2026-09-06T14:33:15.816Z",
+      "updatedAt": "2026-09-06T14:33:15.824Z"
+    },
+    {
+      "_id": "tx_1788705195820_07yf41u",
+      "type": "expense",
+      "amount": 2500000,
+      "category": "Ăn uống",
+      "date": "2026-09-02",
+      "description": "Tiệc liên hoan cuối tuần",
+      "paymentMethod": "e_wallet",
+      "userId": "user_1788705195716_b6oe83g",
+      "createdAt": "2026-09-06T14:33:15.820Z",
+      "updatedAt": "2026-09-06T14:33:15.820Z"
+    },
+    {
+      "_id": "tx_1788705195874_657lfho",
+      "userId": "user_1788705195716_b6oe83g",
+      "type": "expense",
+      "amount": 2000000,
+      "category": "savings",
+      "date": "2026-09-06",
+      "description": "Tích lũy: Quỹ du lịch Đà Lạt",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "tiết kiệm",
+        "Quỹ du lịch Đà Lạt"
+      ],
+      "createdAt": "2026-09-06T14:33:15.874Z",
+      "updatedAt": "2026-09-06T14:33:15.874Z"
+    },
+    {
+      "_id": "tx_1788705205205_02d0x6p",
+      "type": "income",
+      "amount": 16000000,
+      "category": "Lương",
+      "date": "2026-09-01",
+      "description": "Nhận lương tháng 9 + thưởng KPI",
+      "paymentMethod": "bank_transfer",
+      "userId": "user_1788705205097_wpzpv5x",
+      "createdAt": "2026-09-06T14:33:25.205Z",
+      "updatedAt": "2026-09-06T14:33:25.214Z"
+    },
+    {
+      "_id": "tx_1788705205210_a8h5xrp",
+      "type": "expense",
+      "amount": 2500000,
+      "category": "Ăn uống",
+      "date": "2026-09-02",
+      "description": "Tiệc liên hoan cuối tuần",
+      "paymentMethod": "e_wallet",
+      "userId": "user_1788705205097_wpzpv5x",
+      "createdAt": "2026-09-06T14:33:25.210Z",
+      "updatedAt": "2026-09-06T14:33:25.210Z"
+    },
+    {
+      "_id": "tx_1788705205274_l5hjo99",
+      "userId": "user_1788705205097_wpzpv5x",
+      "type": "expense",
+      "amount": 2000000,
+      "category": "savings",
+      "date": "2026-09-06",
+      "description": "Tích lũy: Quỹ du lịch Đà Lạt",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "tiết kiệm",
+        "Quỹ du lịch Đà Lạt"
+      ],
+      "createdAt": "2026-09-06T14:33:25.274Z",
+      "updatedAt": "2026-09-06T14:33:25.274Z"
+    },
+    {
+      "_id": "tx_1788705276445_bqskj6c",
+      "type": "income",
+      "amount": 16000000,
+      "category": "Lương",
+      "date": "2026-09-01",
+      "description": "Nhận lương tháng 9 + thưởng KPI",
+      "paymentMethod": "bank_transfer",
+      "userId": "user_1788705276340_f8nvv6b",
+      "createdAt": "2026-09-06T14:34:36.445Z",
+      "updatedAt": "2026-09-06T14:34:36.453Z"
+    },
+    {
+      "_id": "tx_1788705276448_n6an190",
+      "type": "expense",
+      "amount": 2500000,
+      "category": "Ăn uống",
+      "date": "2026-09-02",
+      "description": "Tiệc liên hoan cuối tuần",
+      "paymentMethod": "e_wallet",
+      "userId": "user_1788705276340_f8nvv6b",
+      "createdAt": "2026-09-06T14:34:36.448Z",
+      "updatedAt": "2026-09-06T14:34:36.448Z"
+    },
+    {
+      "_id": "tx_1788705276502_naf5vsa",
+      "userId": "user_1788705276340_f8nvv6b",
+      "type": "expense",
+      "amount": 2000000,
+      "category": "savings",
+      "date": "2026-09-06",
+      "description": "Tích lũy: Quỹ du lịch Đà Lạt",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "tiết kiệm",
+        "Quỹ du lịch Đà Lạt"
+      ],
+      "createdAt": "2026-09-06T14:34:36.502Z",
+      "updatedAt": "2026-09-06T14:34:36.502Z"
+    },
+    {
+      "_id": "tx_1788705869394_4fv86cb",
+      "type": "expense",
+      "amount": 150000,
+      "category": "food",
+      "date": "2026-09-06",
+      "description": "Ăn trưa bún bò",
+      "paymentMethod": "cash",
+      "tags": [
+        "ăn uống",
+        "trưa"
+      ],
+      "userId": "user_1788705869059_980crf7",
+      "createdAt": "2026-09-06T14:44:29.394Z",
+      "updatedAt": "2026-09-06T14:44:29.394Z"
+    },
+    {
+      "_id": "tx_1788705869397_c108tdn",
+      "type": "income",
+      "amount": 25000000,
+      "category": "salary",
+      "date": "2026-09-06",
+      "description": "Lương tháng này",
+      "paymentMethod": "bank_transfer",
+      "tags": [
+        "lương",
+        "thu nhập"
+      ],
+      "userId": "user_1788705869059_980crf7",
+      "createdAt": "2026-09-06T14:44:29.397Z",
+      "updatedAt": "2026-09-06T14:44:29.397Z"
+    },
+    {
+      "_id": "tx_1788705869406_ynybpsg",
+      "type": "expense",
+      "amount": 80000,
+      "category": "transport",
+      "date": "2026-01-15",
+      "description": "Xăng xe tháng 1",
+      "userId": "user_1788705869059_980crf7",
+      "createdAt": "2026-09-06T14:44:29.406Z",
+      "updatedAt": "2026-09-06T14:44:29.406Z"
+    },
+    {
+      "_id": "tx_1788705869411_kfpdfu6",
+      "type": "expense",
+      "amount": 200000,
+      "category": "shopping",
+      "date": "2026-12-25",
+      "description": "Mua sắm Giáng sinh",
+      "userId": "user_1788705869059_980crf7",
+      "createdAt": "2026-09-06T14:44:29.411Z",
+      "updatedAt": "2026-09-06T14:44:29.411Z"
+    }
+  ],
+  "budgets": [
+    {
+      "_id": "bgt_1788704969667_5pnzxi2",
+      "userId": "user_1788704969663_u44b6cl",
+      "category": "food",
+      "amount": 4000000,
+      "period": "monthly",
+      "month": "2026-09",
+      "alertThreshold": 80,
+      "notes": "Ngân sách ăn uống sinh hoạt",
+      "createdAt": "2026-09-06T14:29:29.667Z",
+      "updatedAt": "2026-09-06T14:29:29.667Z"
+    },
+    {
+      "_id": "bgt_1788704969667_1awgdeo",
+      "userId": "user_1788704969663_u44b6cl",
+      "category": "bills",
+      "amount": 6000000,
+      "period": "monthly",
+      "month": "2026-09",
+      "alertThreshold": 90,
+      "notes": "Hóa đơn & tiền nhà cố định",
+      "createdAt": "2026-09-06T14:29:29.667Z",
+      "updatedAt": "2026-09-06T14:29:29.667Z"
+    },
+    {
+      "_id": "bgt_1788704969667_cjxhhrg",
+      "userId": "user_1788704969663_u44b6cl",
+      "category": "shopping",
+      "amount": 2000000,
+      "period": "monthly",
+      "month": "2026-09",
+      "alertThreshold": 75,
+      "notes": "Mua sắm cá nhân",
+      "createdAt": "2026-09-06T14:29:29.667Z",
+      "updatedAt": "2026-09-06T14:29:29.667Z"
+    },
+    {
+      "_id": "bgt_1788704969667_t86cpyj",
+      "userId": "user_1788704969663_u44b6cl",
+      "category": "entertainment",
+      "amount": 1500000,
+      "period": "monthly",
+      "month": "2026-09",
+      "alertThreshold": 80,
+      "notes": "Vui chơi giải trí cuối tuần",
+      "createdAt": "2026-09-06T14:29:29.667Z",
+      "updatedAt": "2026-09-06T14:29:29.667Z"
+    },
+    {
+      "_id": "bgt_1788704969667_i7feh53",
+      "userId": "user_1788704969663_u44b6cl",
+      "category": "transport",
+      "amount": 1000000,
+      "period": "monthly",
+      "month": "2026-09",
+      "alertThreshold": 85,
+      "notes": "Xăng xe & di chuyển",
+      "createdAt": "2026-09-06T14:29:29.667Z",
+      "updatedAt": "2026-09-06T14:29:29.667Z"
+    },
+    {
+      "_id": "bgt_1788705157069_vzffygd",
+      "category": "Ăn uống",
+      "amount": 5000000,
+      "month": "2026-09",
+      "alertThreshold": 80,
+      "userId": "user_1788705156939_vy66rut",
+      "period": "monthly",
+      "createdAt": "2026-09-06T14:32:37.069Z",
+      "updatedAt": "2026-09-06T14:32:37.069Z"
+    },
+    {
+      "_id": "bgt_1788705176915_q122gyj",
+      "category": "Ăn uống",
+      "amount": 5000000,
+      "month": "2026-09",
+      "alertThreshold": 80,
+      "userId": "user_1788705176765_atr3422",
+      "period": "monthly",
+      "createdAt": "2026-09-06T14:32:56.915Z",
+      "updatedAt": "2026-09-06T14:32:56.915Z"
+    },
+    {
+      "_id": "bgt_1788705195864_lplxzyf",
+      "category": "Ăn uống",
+      "amount": 5000000,
+      "month": "2026-09",
+      "alertThreshold": 80,
+      "userId": "user_1788705195716_b6oe83g",
+      "period": "monthly",
+      "createdAt": "2026-09-06T14:33:15.864Z",
+      "updatedAt": "2026-09-06T14:33:15.864Z"
+    },
+    {
+      "_id": "bgt_1788705205261_6tsbpn8",
+      "category": "Ăn uống",
+      "amount": 5000000,
+      "month": "2026-09",
+      "alertThreshold": 80,
+      "userId": "user_1788705205097_wpzpv5x",
+      "period": "monthly",
+      "createdAt": "2026-09-06T14:33:25.261Z",
+      "updatedAt": "2026-09-06T14:33:25.261Z"
+    },
+    {
+      "_id": "bgt_1788705276492_e1yttdr",
+      "category": "Ăn uống",
+      "amount": 5000000,
+      "month": "2026-09",
+      "alertThreshold": 80,
+      "userId": "user_1788705276340_f8nvv6b",
+      "period": "monthly",
+      "createdAt": "2026-09-06T14:34:36.492Z",
+      "updatedAt": "2026-09-06T14:34:36.492Z"
+    }
+  ],
+  "savingsGoals": [
+    {
+      "_id": "goal_1788704969668_3bm0pj8",
+      "userId": "user_1788704969663_u44b6cl",
+      "name": "Quỹ dự phòng khẩn cấp",
+      "targetAmount": 50000000,
+      "currentAmount": 35000000,
+      "deadline": "2027-06-30",
+      "category": "emergency",
+      "color": "#10b981",
+      "icon": "ShieldCheck",
+      "notes": "Dự phòng 3-6 tháng chi tiêu sinh hoạt",
+      "history": [
+        {
+          "id": "hist_1788704969668",
+          "date": "2026-09-06",
+          "amount": 35000000,
+          "type": "deposit",
+          "note": "Initial deposit"
+        }
+      ],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:29:29.668Z",
+      "updatedAt": "2026-09-06T14:29:29.668Z"
+    },
+    {
+      "_id": "goal_1788704969668_2ifehif",
+      "userId": "user_1788704969663_u44b6cl",
+      "name": "Mua Macbook Pro M3",
+      "targetAmount": 38000000,
+      "currentAmount": 24500000,
+      "deadline": "2026-12-25",
+      "category": "gadget",
+      "color": "#3b82f6",
+      "icon": "Laptop",
+      "notes": "Nâng cấp máy tính phục vụ công việc lập trình",
+      "history": [
+        {
+          "id": "hist_1788704969668",
+          "date": "2026-09-06",
+          "amount": 24500000,
+          "type": "deposit",
+          "note": "Initial deposit"
+        }
+      ],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:29:29.668Z",
+      "updatedAt": "2026-09-06T14:29:29.668Z"
+    },
+    {
+      "_id": "goal_1788704969669_fezoxim",
+      "userId": "user_1788704969663_u44b6cl",
+      "name": "Du lịch Đà Nẵng - Hội An",
+      "targetAmount": 12000000,
+      "currentAmount": 9000000,
+      "deadline": "2027-04-30",
+      "category": "travel",
+      "color": "#f59e0b",
+      "icon": "Plane",
+      "notes": "Chuyến đi nghỉ mát cùng gia đình",
+      "history": [
+        {
+          "id": "hist_1788704969669",
+          "date": "2026-09-06",
+          "amount": 9000000,
+          "type": "deposit",
+          "note": "Initial deposit"
+        }
+      ],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:29:29.669Z",
+      "updatedAt": "2026-09-06T14:29:29.669Z"
+    },
+    {
+      "_id": "goal_1788705157105_mvxd91y",
+      "name": "Quỹ du lịch Đà Lạt",
+      "targetAmount": 10000000,
+      "initialAmount": 1000000,
+      "deadline": "2026-12-31",
+      "category": "Du lịch",
+      "color": "#10b981",
+      "userId": "user_1788705156939_vy66rut",
+      "currentAmount": 0,
+      "history": [],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:32:37.105Z",
+      "updatedAt": "2026-09-06T14:32:37.105Z"
+    },
+    {
+      "_id": "goal_1788705176920_igkc4b1",
+      "name": "Quỹ du lịch Đà Lạt",
+      "targetAmount": 10000000,
+      "initialAmount": 1000000,
+      "deadline": "2026-12-31",
+      "category": "Du lịch",
+      "color": "#10b981",
+      "userId": "user_1788705176765_atr3422",
+      "currentAmount": 2000000,
+      "history": [
+        {
+          "id": "hist_1788705176924",
+          "date": "2026-09-06",
+          "amount": 2000000,
+          "type": "deposit",
+          "note": "Nạp thêm tiền tiết kiệm đợt 1"
+        }
+      ],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:32:56.920Z",
+      "updatedAt": "2026-09-06T14:32:56.924Z"
+    },
+    {
+      "_id": "goal_1788705195870_ub3mtrx",
+      "name": "Quỹ du lịch Đà Lạt",
+      "targetAmount": 10000000,
+      "initialAmount": 1000000,
+      "deadline": "2026-12-31",
+      "category": "Du lịch",
+      "color": "#10b981",
+      "userId": "user_1788705195716_b6oe83g",
+      "currentAmount": 2000000,
+      "history": [
+        {
+          "id": "hist_1788705195873",
+          "date": "2026-09-06",
+          "amount": 2000000,
+          "type": "deposit",
+          "note": "Nạp thêm tiền tiết kiệm đợt 1"
+        }
+      ],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:33:15.870Z",
+      "updatedAt": "2026-09-06T14:33:15.873Z"
+    },
+    {
+      "_id": "goal_1788705205270_a8egcav",
+      "name": "Quỹ du lịch Đà Lạt",
+      "targetAmount": 10000000,
+      "initialAmount": 1000000,
+      "deadline": "2026-12-31",
+      "category": "Du lịch",
+      "color": "#10b981",
+      "userId": "user_1788705205097_wpzpv5x",
+      "currentAmount": 3000000,
+      "history": [
+        {
+          "id": "hist_1788705205270",
+          "date": "2026-09-06",
+          "amount": 1000000,
+          "type": "deposit",
+          "note": "Initial deposit"
+        },
+        {
+          "id": "hist_1788705205274",
+          "date": "2026-09-06",
+          "amount": 2000000,
+          "type": "deposit",
+          "note": "Nạp thêm tiền tiết kiệm đợt 1"
+        }
+      ],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:33:25.270Z",
+      "updatedAt": "2026-09-06T14:33:25.274Z"
+    },
+    {
+      "_id": "goal_1788705276498_gulq2y4",
+      "name": "Quỹ du lịch Đà Lạt",
+      "targetAmount": 10000000,
+      "initialAmount": 1000000,
+      "deadline": "2026-12-31",
+      "category": "Du lịch",
+      "color": "#10b981",
+      "userId": "user_1788705276340_f8nvv6b",
+      "currentAmount": 3000000,
+      "history": [
+        {
+          "id": "hist_1788705276498",
+          "date": "2026-09-06",
+          "amount": 1000000,
+          "type": "deposit",
+          "note": "Initial deposit"
+        },
+        {
+          "id": "hist_1788705276501",
+          "date": "2026-09-06",
+          "amount": 2000000,
+          "type": "deposit",
+          "note": "Nạp thêm tiền tiết kiệm đợt 1"
+        }
+      ],
+      "isCompleted": false,
+      "createdAt": "2026-09-06T14:34:36.498Z",
+      "updatedAt": "2026-09-06T14:34:36.501Z"
+    }
+  ],
+  "recurringPayments": [
+    {
+      "_id": "rec_1788704969669_9ry93p5",
+      "userId": "user_1788704969663_u44b6cl",
+      "title": "Tiền thuê nhà chung cư",
+      "amount": 4500000,
+      "type": "expense",
+      "category": "bills",
+      "frequency": "monthly",
+      "dueDate": 2,
+      "nextDueDate": "2026-09-02",
+      "reminderDaysBefore": 3,
+      "autoRecordTransaction": true,
+      "status": "active",
+      "notes": "Chuyển khoản cho chủ nhà",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:29:29.669Z",
+      "updatedAt": "2026-09-06T14:29:29.669Z"
+    },
+    {
+      "_id": "rec_1788704969669_ashhxtu",
+      "userId": "user_1788704969663_u44b6cl",
+      "title": "Hóa đơn điện lực EVN",
+      "amount": 650000,
+      "type": "expense",
+      "category": "bills",
+      "frequency": "monthly",
+      "dueDate": 15,
+      "nextDueDate": "2026-09-15",
+      "reminderDaysBefore": 3,
+      "autoRecordTransaction": true,
+      "status": "active",
+      "notes": "Thanh toán qua ví điện tử",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:29:29.669Z",
+      "updatedAt": "2026-09-06T14:29:29.669Z"
+    },
+    {
+      "_id": "rec_1788704969669_jmi5tig",
+      "userId": "user_1788704969663_u44b6cl",
+      "title": "Gói xem phim Netflix Premium",
+      "amount": 260000,
+      "type": "expense",
+      "category": "entertainment",
+      "frequency": "monthly",
+      "dueDate": 20,
+      "nextDueDate": "2026-09-20",
+      "reminderDaysBefore": 2,
+      "autoRecordTransaction": true,
+      "status": "active",
+      "notes": "Trừ thẻ tín dụng tự động",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:29:29.669Z",
+      "updatedAt": "2026-09-06T14:29:29.669Z"
+    },
+    {
+      "_id": "rec_1788705157111_xjlmx6d",
+      "title": "Tiền Internet FPT",
+      "amount": 350000,
+      "type": "expense",
+      "category": "Hóa đơn & Tiện ích",
+      "frequency": "monthly",
+      "nextDueDate": "2026-09-15",
+      "reminderDaysBefore": 3,
+      "autoRecordTransaction": true,
+      "userId": "user_1788705156939_vy66rut",
+      "dueDate": 1,
+      "status": "active",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:32:37.111Z",
+      "updatedAt": "2026-09-06T14:32:37.111Z"
+    },
+    {
+      "_id": "rec_1788705176927_om0thp6",
+      "title": "Tiền Internet FPT",
+      "amount": 350000,
+      "type": "expense",
+      "category": "Hóa đơn & Tiện ích",
+      "frequency": "monthly",
+      "nextDueDate": "2026-09-15",
+      "reminderDaysBefore": 3,
+      "autoRecordTransaction": true,
+      "userId": "user_1788705176765_atr3422",
+      "dueDate": 1,
+      "status": "active",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:32:56.927Z",
+      "updatedAt": "2026-09-06T14:32:56.927Z"
+    },
+    {
+      "_id": "rec_1788705195877_9v02v1h",
+      "title": "Tiền Internet FPT",
+      "amount": 350000,
+      "type": "expense",
+      "category": "Hóa đơn & Tiện ích",
+      "frequency": "monthly",
+      "nextDueDate": "2026-09-15",
+      "reminderDaysBefore": 3,
+      "autoRecordTransaction": true,
+      "userId": "user_1788705195716_b6oe83g",
+      "dueDate": 1,
+      "status": "active",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:33:15.877Z",
+      "updatedAt": "2026-09-06T14:33:15.877Z"
+    },
+    {
+      "_id": "rec_1788705205278_mtwahk5",
+      "title": "Tiền Internet FPT",
+      "amount": 350000,
+      "type": "expense",
+      "category": "Hóa đơn & Tiện ích",
+      "frequency": "monthly",
+      "nextDueDate": "2026-09-15",
+      "reminderDaysBefore": 3,
+      "autoRecordTransaction": true,
+      "userId": "user_1788705205097_wpzpv5x",
+      "dueDate": 1,
+      "status": "active",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:33:25.278Z",
+      "updatedAt": "2026-09-06T14:33:25.278Z"
+    },
+    {
+      "_id": "rec_1788705276504_repyxjh",
+      "title": "Tiền Internet FPT",
+      "amount": 350000,
+      "type": "expense",
+      "category": "Hóa đơn & Tiện ích",
+      "frequency": "monthly",
+      "nextDueDate": "2026-09-15",
+      "reminderDaysBefore": 3,
+      "autoRecordTransaction": true,
+      "userId": "user_1788705276340_f8nvv6b",
+      "dueDate": 1,
+      "status": "active",
+      "paymentHistory": [],
+      "createdAt": "2026-09-06T14:34:36.504Z",
+      "updatedAt": "2026-09-06T14:34:36.504Z"
+    }
+  ]
+}
