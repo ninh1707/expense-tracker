@@ -16,6 +16,7 @@ import {
 import { ITransaction, TransactionType } from '../../types';
 import { api } from '../../services/api';
 import { CATEGORIES, PAYMENT_METHODS, formatCurrency, getCategoryById } from '../../utils/categories';
+import { CategoryIcon } from '../common/CategoryIcon';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useNotification } from '../../contexts/NotificationContext';
 
@@ -317,7 +318,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                           className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold"
                           style={{ backgroundColor: cat.bgColor, color: cat.color }}
                         >
-                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
+                          <CategoryIcon categoryId={tx.category} variant="inline" size={14} />
                           {language === 'vi' ? cat.labelVi : cat.labelEn}
                         </span>
                       </td>

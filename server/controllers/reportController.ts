@@ -24,7 +24,7 @@ export class ReportController {
       const format = (req.query.format as string) || 'json';
 
       if (format === 'csv') {
-        const csv = await ReportService.exportData(userId, 'csv');
+        const csv = await ReportService.exportData(userId, 'csv', req.query.startDate as string | undefined, req.query.endDate as string | undefined);
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', 'attachment; filename="personal_finance_report.csv"');
         res.send(csv);

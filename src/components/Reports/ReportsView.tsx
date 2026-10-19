@@ -15,7 +15,6 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import {
-  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
@@ -30,7 +29,8 @@ import { api } from '../../services/api';
 import { CATEGORIES, PAYMENT_METHODS, formatCurrency, getCategoryById } from '../../utils/categories';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useNotification } from '../../contexts/NotificationContext';
-import { jsPDF } from 'jspdf';
+import { downloadVietnameseReport } from '../../utils/pdfReport';
+import PeriodCategoryReport from './PeriodCategoryReport';
 
 interface ReportsViewProps {
   currency: string;
@@ -51,6 +51,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
       setReportData(data);
     } catch (err) {
       console.error('Error fetching report:', err);
+      setReportData(null);
+      addToast('Lỗi', 'Không tải được dữ liệu báo cáo. Vui lòng thử lại.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -71,61 +73,10 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
 
   const handleExportPDF = () => {
     try {
-      const doc = new jsPDF();
-      doc.setFontSize(18);
-      doc.text('FINTRACK - BAO CAO TAI CHINH', 14, 20);
-
-      doc.setFontSize(10);
-      doc.text(`Ky bao cao: ${period.toUpperCase()}`, 14, 28);
-      doc.text(`Ngay xuat: ${new Date().toLocaleDateString('vi-VN')}`, 14, 34);
-
-      doc.setFontSize(13);
-      doc.text('1. TONG QUAN THU CHI', 14, 46);
-      doc.setFontSize(10);
-      const incomeStr = formatCurrency(reportData?.totalIncome || 0, currency);
-      const expenseStr = formatCurrency(reportData?.totalExpense || 0, currency);
-      const netStr = formatCurrency(reportData?.netBalance || 0, currency);
-      const rateStr = `${reportData?.savingsRate || 0}%`;
-
-      doc.text(`- Tong thu nhap: ${incomeStr}`, 14, 54);
-      doc.text(`- Tong chi tieu: ${expenseStr}`, 14, 61);
-      doc.text(`- So du rong: ${netStr}`, 14, 68);
-      doc.text(`- Ty le tich luy: ${rateStr}`, 14, 75);
-
-      doc.setFontSize(13);
-      doc.text('2. CO CAU CHI TIEU THEO DANH MUC', 14, 88);
-      doc.setFontSize(10);
-      let y = 96;
-      if (reportData?.categoryBreakdown?.length) {
-        reportData.categoryBreakdown.forEach((item: any) => {
-          const cat = getCategoryById(item.category);
-          const catName = cat.labelEn || item.category;
-          const amtStr = formatCurrency(item.amount, currency);
-          doc.text(`* ${catName}: ${amtStr} (${item.percentage}%)`, 16, y);
-          y += 7;
-        });
-      } else {
-        doc.text('Chua co du lieu chi tieu', 16, y);
-        y += 7;
-      }
-
-      y += 6;
-      doc.setFontSize(13);
-      doc.text('3. DANH GIA SUC KHOE TAI CHINH', 14, y);
-      y += 8;
-      doc.setFontSize(10);
-      doc.text(`Trang thai: ${reportData?.financialHealth?.status || 'Binh thuong'}`, 14, y);
-      y += 7;
-      const rec = reportData?.financialHealth?.recommendation || 'Duy tri chi tieu hop ly va tich luy deu dan.';
-      const splitRec = doc.splitTextToSize(`Goi y: ${rec}`, 180);
-      doc.text(splitRec, 14, y);
-
-      doc.save(`FinTrack_BaoCao_${period}_${new Date().toISOString().slice(0, 10)}.pdf`);
-      addToast('Thành công', 'Đã tạo và tải file PDF báo cáo tài chính thành công', 'success');
-    } catch (err: any) {
-      console.error(err);
-      addToast('Lỗi', 'Không thể tạo file PDF', 'error');
-    }
+      if (!reportData) { addToast('Thông báo','Chưa có dữ liệu báo cáo để xuất','error'); return; }
+      downloadVietnameseReport(reportData,period,currency);
+      addToast('Thành công','Đã xuất PDF có hỗ trợ tiếng Việt','success');
+    } catch(err){console.error(err);addToast('Lỗi','Không thể tạo file PDF','error');}
   };
 
   const handlePrint = () => {
@@ -213,6 +164,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
         </div>
       </div>
 
+      <PeriodCategoryReport token={localStorage.getItem('auth_token') || ''} />
       {/* Financial Health & Insights Card */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <div className="lg:col-span-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-md">
@@ -258,17 +210,17 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col items-center justify-center text-center">
           <Award className="w-10 h-10 text-emerald-600 mb-2" />
           <span className="text-3xl font-black text-slate-900">
-            {reportData?.financialHealth?.score || 85}/100
+            {reportData?.financialHealth?.score ?? 0}/100
           </span>
           <span className="text-xs font-bold text-emerald-700 mt-1">Điểm sức khỏe tài chính</span>
-          <p className="text-[11px] text-slate-400 mt-1">Dựa trên tỷ lệ tiết kiệm và tuân thủ ngân sách</p>
+          <p className="text-[11px] text-slate-400 mt-1">Điểm tham khảo dựa trên tỷ lệ tích lũy; chưa tính mức tuân thủ ngân sách</p>
         </div>
       </div>
 
       {/* Main Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Income vs Expense Bar Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="min-w-0 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-bold text-slate-900 text-sm sm:text-base">
@@ -278,10 +230,9 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
             </div>
           </div>
 
-          <div className="h-64 w-full">
+          <div className="h-64 w-full min-w-0">
             {comparisonBarData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={comparisonBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart width={700} height={256} style={{ width: '100%', height: '100%' }} data={comparisonBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <XAxis dataKey="date" stroke="#94a3b8" fontSize={10} />
                   <YAxis
                     stroke="#94a3b8"
@@ -296,7 +247,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
                   <Bar dataKey="Thu nhập" fill="#10b981" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="Chi tiêu" fill="#ef4444" radius={[4, 4, 0, 0]} />
                 </BarChart>
-              </ResponsiveContainer>
+              
             ) : (
               <div className="py-16 text-center text-slate-400 text-xs">Không đủ dữ liệu cho chu kỳ này</div>
             )}
@@ -304,7 +255,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
         </div>
 
         {/* Category Breakdown Donut */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="min-w-0 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-bold text-slate-900 text-sm sm:text-base">
@@ -314,10 +265,9 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
             </div>
           </div>
 
-          <div className="h-64 w-full flex items-center justify-center">
+          <div className="h-64 w-full min-w-0 flex items-center justify-center">
             {categoryPieData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <PieChart width={500} height={256} style={{ width: '100%', height: '100%' }}>
                   <Pie
                     data={categoryPieData}
                     cx="50%"
@@ -337,7 +287,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ currency }) => {
                   />
                   <Legend wrapperStyle={{ fontSize: '11px' }} />
                 </PieChart>
-              </ResponsiveContainer>
+              
             ) : (
               <div className="py-16 text-center text-slate-400 text-xs">Chưa có dữ liệu chi tiêu</div>
             )}

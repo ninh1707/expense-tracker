@@ -11,13 +11,14 @@ import { BudgetsView } from './components/Budgets/BudgetsView';
 import { SavingsView } from './components/Savings/SavingsView';
 import { RecurringView } from './components/Recurring/RecurringView';
 import { ReportsView } from './components/Reports/ReportsView';
+import AdminDashboard from './components/Admin/AdminDashboard';
 import { SettingsView } from './components/Settings/SettingsView';
 import { TransactionFormModal } from './components/Transactions/TransactionFormModal';
 import { AuthModal } from './components/Auth/AuthModal';
 import { api } from './services/api';
 
 const AppContent: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, token, isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
   const { addToast, refreshNotifications } = useNotification();
 
@@ -80,7 +81,7 @@ const AppContent: React.FC = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-900 antialiased">
+      <div className="fintrack-auth-shell min-h-screen bg-slate-100 flex flex-col font-sans text-slate-900 antialiased">
         <Navbar
           onOpenNewTransaction={() => setIsAuthModalOpen(true)}
           onToggleMobileSidebar={() => {}}
@@ -100,8 +101,12 @@ const AppContent: React.FC = () => {
     );
   }
 
+  if (user?.role === 'admin' && token) {
+    return <AdminDashboard token={token} />;
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="fintrack-ui min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 antialiased selection:bg-emerald-500 selection:text-white">
       {/* Top Navbar */}
       <Navbar
         onOpenNewTransaction={handleOpenNewTransaction}
@@ -113,7 +118,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* Main Layout Body */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
+      <div className="flex-1 flex w-full mx-auto">
         {/* Sidebar */}
         <Sidebar
           currentTab={currentTab}

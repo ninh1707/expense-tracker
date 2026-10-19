@@ -1,0 +1,15 @@
+FINTRACK VN — PATCH HIEN THI NHAT KY ADMIN
+
+Danh cho thu muc expense-tracker-main dang chay sau cac patch truoc.
+- Frontend: hien thi ten va email doi tuong, cho phep tim theo ten, email.
+- MongoDB: API /api/admin/logs tra cuu ten/email cho cac ban ghi cu.
+- JSON Store: tuong tu, khong thay doi cac ban ghi cu trong db.json.
+- Nhat ky moi: luu thong tin ten/email tai thoi diem thao tac.
+- Khi khong tim duoc tai khoan/danh muc: hien 'khong xac dinh'; ID trong tooltip.
+
+CAN LAM: dung server (Ctrl+C), giai nen ZIP vao dung thu muc
+expense-tracker-main, khoi dong lai: npm run dev, tai lai web Ctrl+Shift+R,
+chon Admin > Nhat ky hoat dong > Lam moi.
+
+PATCH KHONG CHUA .env, data/db.json, node_modules hay script migration.
+Chua co kiem thu tich hop MongoDB that trong moi truong tao patch.

@@ -36,12 +36,17 @@ export class SavingsService {
 
     const initialVal = Number(data.currentAmount !== undefined ? data.currentAmount : (data as any).initialAmount || 0);
 
+    if (!Number.isFinite(initialVal) || initialVal < 0) throw new Error('Số tiền ban đầu không hợp lệ');
     return await SavingsGoalModel.create({
-      ...data,
       userId,
+      name: data.name,
       targetAmount: Number(data.targetAmount),
       currentAmount: initialVal,
-      category: data.category || 'general'
+      deadline: data.deadline,
+      category: data.category || 'general',
+      notes: data.notes,
+      icon: data.icon,
+      color: data.color
     });
   }
 
@@ -51,13 +56,30 @@ export class SavingsService {
       throw new Error('Mục tiêu tiết kiệm không tồn tại');
     }
 
-    const payload: Partial<ISavingsGoal> = { ...data };
-    if (data.targetAmount !== undefined) payload.targetAmount = Number(data.targetAmount);
-    if (data.currentAmount !== undefined) {
-      payload.currentAmount = Number(data.currentAmount);
-      payload.isCompleted = payload.currentAmount >= (data.targetAmount || goal.targetAmount);
+    // currentAmount/history chỉ được thay qua depositOrWithdraw, không qua update.
+    const payload: Partial<ISavingsGoal> = {};
+    if (data.name !== undefined) {
+      if (typeof data.name !== 'string' || !data.name.trim()) throw new Error('Tên mục tiêu không hợp lệ');
+      payload.name = data.name.trim();
     }
-
+    if (data.targetAmount !== undefined) {
+      const target = Number(data.targetAmount);
+      if (!Number.isFinite(target) || target <= 0) throw new Error('Số tiền mục tiêu phải lớn hơn 0');
+      payload.targetAmount = target;
+      payload.isCompleted = goal.currentAmount >= target;
+    }
+    if (data.deadline !== undefined) {
+      if (typeof data.deadline !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(data.deadline)) throw new Error('Hạn chót không hợp lệ');
+      payload.deadline = data.deadline;
+    }
+    for (const key of ['category', 'notes', 'icon', 'color'] as const) {
+      const value = data[key];
+      if (value !== undefined) {
+        if (typeof value !== 'string') throw new Error('Thông tin mục tiêu không hợp lệ');
+        payload[key] = value;
+      }
+    }
+    if (!Object.keys(payload).length) throw new Error('Không có trường được phép cập nhật');
     return await SavingsGoalModel.findByIdAndUpdate(id, payload);
   }
 
@@ -74,7 +96,7 @@ export class SavingsService {
       throw new Error('Mục tiêu tiết kiệm không tồn tại');
     }
 
-    if (!amount || amount <= 0) {
+    if (!Number.isFinite(amount) || amount <= 0) {
       throw new Error('Số tiền phải lớn hơn 0');
     }
 

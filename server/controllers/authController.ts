@@ -19,8 +19,8 @@ export class AuthController {
         res.status(400).json({ success: false, message: 'Email không đúng định dạng' });
         return;
       }
-      if (!password || password.length < 6) {
-        res.status(400).json({ success: false, message: 'Mật khẩu tối thiểu 6 ký tự' });
+      if (!password || password.length < 8) {
+        res.status(400).json({ success: false, message: 'Mật khẩu tối thiểu 8 ký tự' });
         return;
       }
       const result = await AuthService.register(name, email, password, currency, language);
@@ -45,6 +45,10 @@ export class AuthController {
   }
 
   static async demoLogin(req: Request, res: Response): Promise<void> {
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_DEMO_LOGIN !== 'true') {
+      res.status(404).json({ success: false, message: 'Chức năng đăng nhập thử không được bật.' });
+      return;
+    }
     try {
       const result = await AuthService.seedDemoUser();
       res.json({ success: true, data: result });

@@ -23,7 +23,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const initAuth = async () => {
     const savedToken = localStorage.getItem('auth_token');
-    const wasLoggedOut = localStorage.getItem('fintrack_logged_out') === 'true';
 
     if (savedToken) {
       try {
@@ -35,61 +34,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(null);
         setUser(null);
       }
-    } else if (!wasLoggedOut) {
-      // Auto-load demo user on first visit for instant exploration
-      try {
-        const res = await api.auth.demoLogin();
-        localStorage.setItem('auth_token', res.token);
-        setToken(res.token);
-        setUser(res.user);
-      } catch (e) {
-        console.error('Demo login error:', e);
-      }
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
     initAuth();
+    const syncSession = (event: StorageEvent) => {
+      if (event.key !== 'auth_token') return;
+      if (!event.newValue) {
+        setToken(null);
+        setUser(null);
+        setIsLoading(false);
+      } else if (event.newValue !== event.oldValue) {
+        setToken(event.newValue);
+        setIsLoading(true);
+        api.auth.getProfile().then(profile => {
+          if (localStorage.getItem('auth_token') === event.newValue) setUser(profile);
+        }).catch(() => {
+          if (localStorage.getItem('auth_token') === event.newValue) {
+            localStorage.removeItem('auth_token');
+            setToken(null);
+            setUser(null);
+          }
+        }).finally(() => setIsLoading(false));
+      }
+    };
+    const onSessionExpired = () => {
+      localStorage.removeItem('auth_token');
+      setToken(null);
+      setUser(null);
+      setIsLoading(false);
+    };
+    window.addEventListener('storage', syncSession);
+    window.addEventListener('fintrack:session-expired', onSessionExpired);
+    return () => {
+      window.removeEventListener('storage', syncSession);
+      window.removeEventListener('fintrack:session-expired', onSessionExpired);
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const res = await api.auth.login({ email, password });
-      localStorage.removeItem('fintrack_logged_out');
-      localStorage.setItem('auth_token', res.token);
-      setToken(res.token);
-      setUser(res.user);
-    } finally {
-      setIsLoading(false);
-    }
+    const res = await api.auth.login({ email, password });
+    localStorage.removeItem('fintrack_logged_out');
+    localStorage.setItem('auth_token', res.token);
+    setToken(res.token);
+    setUser(res.user);
   };
 
   const register = async (name: string, email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const res = await api.auth.register({ name, email, password });
-      localStorage.removeItem('fintrack_logged_out');
-      localStorage.setItem('auth_token', res.token);
-      setToken(res.token);
-      setUser(res.user);
-    } finally {
-      setIsLoading(false);
-    }
+    const res = await api.auth.register({ name, email, password });
+    localStorage.removeItem('fintrack_logged_out');
+    localStorage.setItem('auth_token', res.token);
+    setToken(res.token);
+    setUser(res.user);
   };
 
   const demoLogin = async () => {
-    setIsLoading(true);
-    try {
-      const res = await api.auth.demoLogin();
-      localStorage.removeItem('fintrack_logged_out');
-      localStorage.setItem('auth_token', res.token);
-      setToken(res.token);
-      setUser(res.user);
-    } finally {
-      setIsLoading(false);
-    }
+    const res = await api.auth.demoLogin();
+    localStorage.removeItem('fintrack_logged_out');
+    localStorage.setItem('auth_token', res.token);
+    setToken(res.token);
+    setUser(res.user);
   };
 
   const logout = () => {

@@ -1,0 +1,24 @@
+FINTRACK VN - NANG CAP UI IT XAM LAN
+
+Nguon: FinTrack_VN_GIAO_DIEN_MOI_SUA_LOI_IMPORT.zip
+
+FILES CHINH SUA:
+1. src/index.css: cap nhat mau nen, the noi dung, menu, bang, focus, responsive, giam chuyen dong, bo cuc bieu do.
+2. src/components/Dashboard/DashboardView.tsx: chi doi className tren banner va 2 chart card/container, khong sua hooks, events, APIs, validation, data.
+
+KHONG DOI: server/*, routes, state, props, hooks, logic nghiep vu, API, model, handler.
+
+KIEM TRA DA THUC HIEN:
+- Kiem tra diff Dashboard: chi 5 gia tri className thay doi.
+- Giu nguyen nguon logic va cac tep khac ngoai CSS va Dashboard.
+- Kiem tra file reportService.ts: import reportLabels khong bi trung lap.
+
+CHUA THE XAC NHAN:
+- npm ci / lint / build / test / browser console va responsive thuc te chua chay thanh cong trong moi truong hien tai.
+- Hai bieu do trong Dashboard can chay thu; CSS min-width:0 giup bo cuc grid nhung khong chung minh het loi chart.
+
+HUONG DAN:
+1. npm install (dong bo package-lock.json neu ban ZIP cu chua dong bo)
+2. Thiet lap JWT_SECRET rieng trong .env (>= 32 ky tu ngau nhien).
+3. npm run lint && npm run build && npm test && npm run dev
+4. Tren Chrome/Edge va kich thuoc 1440, 768, 390: xac nhan bieu do, menu, form, dropdown, modal va console.

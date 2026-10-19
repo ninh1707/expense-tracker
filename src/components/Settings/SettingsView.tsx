@@ -80,8 +80,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       setPasswordError('Vui lòng nhập mật khẩu hiện tại');
       return;
     }
-    if (!newPassword || newPassword.length < 6) {
-      setPasswordError('Mật khẩu mới tối thiểu phải từ 6 ký tự');
+    if (!newPassword || newPassword.length < 8) {
+      setPasswordError('Mật khẩu mới tối thiểu phải từ 8 ký tự');
       return;
     }
     if (newPassword !== confirmNewPassword) {
@@ -142,8 +142,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   };
 
   return (
-    <div className="max-w-4xl space-y-6 animate-in fade-in duration-200">
-      <div>
+    <div className="ft-page ft-settings grid grid-cols-1 xl:grid-cols-2 gap-5 items-start animate-in fade-in duration-200">
+      <div className="xl:col-span-2">
         <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
           {t('set.title')}
         </h2>
@@ -156,7 +156,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
           <User className="w-5 h-5 text-emerald-600" />
-          <h3 className="font-bold text-slate-900 text-sm sm:text-base">Thông tin cá nhân</h3>
+          <h3 className="font-bold text-slate-900 text-sm sm:text-base">{t('set.profile')}</h3>
         </div>
 
         <form onSubmit={handleUpdateProfile} className="space-y-4">
@@ -219,7 +219,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
           <Coins className="w-5 h-5 text-emerald-600" />
-          <h3 className="font-bold text-slate-900 text-sm sm:text-base">Tùy chọn hiển thị & Ngôn ngữ</h3>
+          <h3 className="font-bold text-slate-900 text-sm sm:text-base">{t('set.preferences')}</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -257,7 +257,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
           <Bell className="w-5 h-5 text-emerald-600" />
-          <h3 className="font-bold text-slate-900 text-sm sm:text-base">Cài đặt thông báo</h3>
+          <h3 className="font-bold text-slate-900 text-sm sm:text-base">{t('set.notifications')}</h3>
         </div>
 
         <div className="space-y-3">
@@ -293,7 +293,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
           <Lock className="w-5 h-5 text-emerald-600" />
-          <h3 className="font-bold text-slate-900 text-sm sm:text-base">Đổi mật khẩu</h3>
+          <h3 className="font-bold text-slate-900 text-sm sm:text-base">{t('set.password')}</h3>
         </div>
 
         {passwordError && (
@@ -381,7 +381,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             className="flex items-center gap-1.5 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors"
           >
             <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span>Nạp lại dữ liệu mẫu (Seed Data)</span>
+            <span>Nạp lại dữ liệu mẫu</span>
           </button>
 
           <button
@@ -389,7 +389,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             className="flex items-center gap-1.5 px-4 py-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold rounded-xl transition-colors"
           >
             <Trash2 className="w-4 h-4 text-rose-600" />
-            <span>Xóa toàn bộ dữ liệu (Reset Data)</span>
+            <span>Xóa toàn bộ dữ liệu</span>
           </button>
         </div>
       </div>

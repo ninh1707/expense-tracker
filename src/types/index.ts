@@ -6,6 +6,8 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
+  role?: 'admin' | 'user';
+  disabled?: boolean;
   currency: string;
   language: string;
   monthlyIncomeTarget?: number;

@@ -9,14 +9,32 @@ export class TransactionController {
       const { type, category, startDate, endDate, search, minAmount, maxAmount, paymentMethod } = req.query;
 
       const filter: TransactionFilter = {};
-      if (type) filter.type = type as any;
+      if (type !== undefined) {
+        if (type !== 'income' && type !== 'expense') {
+          res.status(400).json({ success: false, message: 'Loại giao dịch không hợp lệ.' });
+          return;
+        }
+        filter.type = type;
+      }
+      for (const [key, value] of Object.entries({ category, startDate, endDate, search, paymentMethod })) {
+        if (value !== undefined && typeof value !== 'string') {
+          res.status(400).json({ success: false, message: `Bộ lọc ${key} không hợp lệ.` });
+          return;
+        }
+      }
       if (category) filter.category = category as string;
       if (startDate) filter.startDate = startDate as string;
       if (endDate) filter.endDate = endDate as string;
       if (search) filter.search = search as string;
       if (paymentMethod) filter.paymentMethod = paymentMethod as string;
-      if (minAmount) filter.minAmount = Number(minAmount);
-      if (maxAmount) filter.maxAmount = Number(maxAmount);
+      for (const [key, value] of Object.entries({ minAmount, maxAmount })) {
+        if (value !== undefined && (typeof value !== 'string' || value.trim() === '' || !Number.isFinite(Number(value)))) {
+          res.status(400).json({ success: false, message: `Bộ lọc ${key} không hợp lệ.` });
+          return;
+        }
+      }
+      if (minAmount !== undefined) filter.minAmount = Number(minAmount);
+      if (maxAmount !== undefined) filter.maxAmount = Number(maxAmount);
 
       const list = await TransactionService.getAll(userId, filter);
       res.json({ success: true, data: list });

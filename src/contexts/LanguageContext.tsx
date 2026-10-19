@@ -95,6 +95,11 @@ const translations: Record<Language, Record<string, string>> = {
     // Reports
     'rep.title': 'Báo cáo Tài chính & Phân tích',
     'rep.subtitle': 'Đánh giá thói quen sử dụng tiền và hiệu quả quản lý chi tiêu',
+    'rep.period_month': 'Theo tháng',
+    'rep.period_quarter': 'Theo quý',
+    'rep.period_year': 'Theo năm',
+    'rep.income_vs_expense': 'So sánh thu nhập và chi tiêu',
+    'rep.category_distribution': 'Phân bổ theo danh mục',
     'rep.this_month': 'Tháng này',
     'rep.last_month': 'Tháng trước',
     'rep.this_year': 'Năm nay',
@@ -105,6 +110,14 @@ const translations: Record<Language, Record<string, string>> = {
     'rep.insights_title': 'Đánh giá thói quen tài chính',
     'rep.top_expenses': 'Top 5 khoản chi tiêu lớn nhất',
 
+    'rec.no_bills': 'Chưa có khoản thanh toán định kỳ nào.',
+    'tx.add_success': 'Thêm giao dịch thành công',
+    'tx.edit_success': 'Cập nhật giao dịch thành công',
+    'set.title': 'Cài đặt',
+    'set.profile': 'Thông tin cá nhân',
+    'set.preferences': 'Tùy chọn hiển thị và ngôn ngữ',
+    'set.notifications': 'Cài đặt thông báo',
+    'set.password': 'Đổi mật khẩu',
     // General
     'common.save': 'Lưu thay đổi',
     'common.cancel': 'Hủy bỏ',
@@ -205,6 +218,11 @@ const translations: Record<Language, Record<string, string>> = {
     // Reports
     'rep.title': 'Financial Reports & Analytics',
     'rep.subtitle': 'Review spending habits and financial health metrics',
+    'rep.period_month': 'Monthly',
+    'rep.period_quarter': 'Quarterly',
+    'rep.period_year': 'Yearly',
+    'rep.income_vs_expense': 'Income versus expenses',
+    'rep.category_distribution': 'Spending by category',
     'rep.this_month': 'This Month',
     'rep.last_month': 'Last Month',
     'rep.this_year': 'This Year',
@@ -215,6 +233,11 @@ const translations: Record<Language, Record<string, string>> = {
     'rep.insights_title': 'Financial Habits & Insights',
     'rep.top_expenses': 'Top 5 Largest Expenses',
 
+    'set.title': 'Settings',
+    'set.profile': 'Personal information',
+    'set.preferences': 'Display and language',
+    'set.notifications': 'Notification settings',
+    'set.password': 'Change password',
     // General
     'common.save': 'Save Changes',
     'common.cancel': 'Cancel',
@@ -244,7 +267,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string, fallback?: string): string => {
-    return translations[language][key] || fallback || key;
+    return translations[language][key] || translations.vi[key] || fallback || key;
   };
 
   return (

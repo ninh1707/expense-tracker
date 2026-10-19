@@ -14,10 +14,12 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { IRecurringPayment } from '../../types';
+import { RecurringTable } from './RecurringTable';
 import { api } from '../../services/api';
 import { CATEGORIES, formatCurrency, getCategoryById } from '../../utils/categories';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import { CategoryIcon } from '../common/CategoryIcon';
 
 interface RecurringViewProps {
   currency: string;
@@ -35,6 +37,9 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
 
   const [bills, setBills] = useState<IRecurringPayment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   // Modal create/edit
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,7 +96,7 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
     setCategory(b.category);
     setFrequency(b.frequency);
     setNextDueDate(b.nextDueDate);
-    setReminderDays(b.reminderDays || 3);
+    setReminderDays(b.reminderDaysBefore ?? b.reminderDays ?? 3);
     setNotes(b.notes || '');
     setModalError('');
     setIsModalOpen(true);
@@ -123,7 +128,7 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
           category,
           frequency,
           nextDueDate,
-          reminderDays,
+          reminderDaysBefore: reminderDays,
           notes
         });
         addToast('Thành công', 'Đã cập nhật lịch thanh toán', 'success');
@@ -134,7 +139,7 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
           category,
           frequency,
           nextDueDate,
-          reminderDays,
+          reminderDaysBefore: reminderDays,
           notes,
           status: 'active'
         });
@@ -179,9 +184,25 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
   };
 
   const dueSoonOrOverdueCount = bills.filter(b => b.isDueSoon || b.isOverdue).length;
+  const paidThisMonthCount = bills.filter(b => {
+    if (!b.lastPaidDate) return false;
+    const date = new Date(b.lastPaidDate);
+    const today = new Date();
+    return !Number.isNaN(date.getTime()) && date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth();
+  }).length;
+  const categories: string[] = Array.from(
+    new Set<string>(bills.map(b => String(b.category ?? '')).filter(Boolean))
+  ).sort();
+  const visibleBills = bills.filter(b => {
+    const normalizedQuery = searchQuery.trim().toLocaleLowerCase('vi');
+    const matchesQuery = !normalizedQuery || [b.title, b.notes || '', getCategoryById(b.category).labelVi].some(value => value.toLocaleLowerCase('vi').includes(normalizedQuery));
+    const matchesCategory = categoryFilter === 'all' || b.category === categoryFilter;
+    const matchesStatus = statusFilter === 'all' || (statusFilter === 'overdue' && b.isOverdue) || (statusFilter === 'due' && b.isDueSoon && !b.isOverdue) || (statusFilter === 'normal' && !b.isDueSoon && !b.isOverdue);
+    return matchesQuery && matchesCategory && matchesStatus;
+  });
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="ft-page ft-recurring space-y-6 animate-in fade-in duration-200">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -202,6 +223,17 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
         </button>
       </div>
 
+      <div className="ft-summary-grid">
+        <div className="ft-stat-card"><div className="ft-stat-icon bg-emerald-50 text-emerald-600"><Repeat className="w-5 h-5" /></div><div><p className="ft-stat-label">Tổng khoản định kỳ</p><strong className="ft-stat-value">{bills.length}</strong><p className="ft-stat-caption">khoản đã khai báo</p></div></div>
+        <div className="ft-stat-card"><div className="ft-stat-icon bg-amber-50 text-amber-600"><Calendar className="w-5 h-5" /></div><div><p className="ft-stat-label">Đến hạn / Quá hạn</p><strong className="ft-stat-value">{dueSoonOrOverdueCount}</strong><p className="ft-stat-caption">khoản cần chú ý</p></div></div>
+        <div className="ft-stat-card"><div className="ft-stat-icon bg-blue-50 text-blue-600"><CheckCircle2 className="w-5 h-5" /></div><div><p className="ft-stat-label">Đã thanh toán tháng này</p><strong className="ft-stat-value">{paidThisMonthCount}</strong><p className="ft-stat-caption">dựa trên ngày thanh toán gần nhất</p></div></div>
+      </div>
+      <div className="ft-filters" role="search" aria-label="Lọc khoản chi định kỳ">
+        <input aria-label="Tìm khoản chi" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Tìm theo tên, danh mục hoặc ghi chú..." />
+        <select aria-label="Lọc danh mục" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}><option value="all">Tất cả danh mục</option>{categories.map(c => <option key={c} value={c}>{getCategoryById(c).labelVi}</option>)}</select>
+        <select aria-label="Lọc trạng thái" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}><option value="all">Tất cả trạng thái</option><option value="overdue">Quá hạn</option><option value="due">Sắp đến hạn</option><option value="normal">Đang theo dõi</option></select>
+      </div>
+
       {/* Reminder Alert Banner if any overdue or due soon */}
       {dueSoonOrOverdueCount > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-3 text-amber-900">
@@ -219,6 +251,15 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
         </div>
       )}
 
+      {/* Một nguồn dữ liệu + một bộ handler cho cả bảng desktop và card mobile. */}
+      {!isLoading && bills.length > 0 && visibleBills.length > 0 && (
+        <RecurringTable bills={visibleBills} currency={currency} language={language}
+          onPay={bill => { setPayingBill(bill); setRecordTransaction(true); }}
+          onEdit={openEditModal} onDelete={handleDeleteBill} />
+      )}
+      {!isLoading && bills.length > 0 && visibleBills.length === 0 && (
+        <div className="ft-empty-filter">Không có khoản chi định kỳ nào phù hợp bộ lọc. <button type="button" onClick={() => { setSearchQuery(''); setCategoryFilter('all'); setStatusFilter('all'); }} className="text-emerald-700 font-semibold underline underline-offset-2">Xóa bộ lọc</button></div>
+      )}
       {/* Bills Grid / List */}
       {isLoading ? (
         <div className="py-16 text-center text-slate-400">
@@ -237,8 +278,8 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {bills.map((bill) => {
+        <div className="ft-recurring-list grid grid-cols-1 lg:hidden gap-4">
+          {visibleBills.map((bill) => {
             const cat = getCategoryById(bill.category);
             const isOverdue = bill.isOverdue;
             const isDueSoon = bill.isDueSoon;
@@ -264,12 +305,7 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-3">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white font-bold text-sm"
-                        style={{ backgroundColor: cat.color }}
-                      >
-                        {cat.labelVi.charAt(0)}
-                      </div>
+                      <CategoryIcon categoryId={bill.category} className="w-10 h-10" size={20} />
                       <div className="min-w-0">
                         <h4 className="font-bold text-slate-900 text-sm truncate">{bill.title}</h4>
                         <span className="text-[11px] text-slate-400 block font-medium">
@@ -359,6 +395,7 @@ export const RecurringView: React.FC<RecurringViewProps> = ({
           })}
         </div>
       )}
+
 
       {/* Pay Confirmation Modal */}
       {payingBill && (

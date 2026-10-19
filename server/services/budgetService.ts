@@ -6,13 +6,38 @@ export class BudgetService {
     const month = monthStr || new Date().toISOString().substring(0, 7);
     const budgets = await BudgetModel.find({ userId });
     
-    // Get all expense transactions in this month
+    // Kỳ báo cáo được tính riêng cho từng ngân sách, thay vì lấy tất cả giao dịch của tháng.
     const allTransactions = await TransactionModel.find({ userId, type: 'expense' });
-    const monthTransactions = allTransactions.filter(t => t.date.startsWith(month));
+    const [yearStr, monthNumberStr] = month.split('-');
+    const year = Number(yearStr), monthIndex = Number(monthNumberStr) - 1;
+    const today = new Date();
+    const reference = (today.getUTCFullYear() === year && today.getUTCMonth() === monthIndex)
+      ? new Date(Date.UTC(year, monthIndex, today.getUTCDate()))
+      : new Date(Date.UTC(year, monthIndex, 1));
 
     return budgets.map(b => {
-      const spent = monthTransactions
-        .filter(t => t.category === b.category)
+      const budgetMonth = b.month || month;
+      const [by, bm] = budgetMonth.split('-').map(Number);
+      const period = b.period || 'monthly';
+      let start: Date, end: Date;
+      if (period === 'yearly') {
+        start = new Date(Date.UTC(by, 0, 1));
+        end = new Date(Date.UTC(by + 1, 0, 1));
+      } else if (period === 'weekly') {
+        // Tuần thứ nhất chứa ngày đầu tháng; các tuần sau bắt đầu thứ Hai.
+        const weekStart = new Date(reference);
+        const day = (weekStart.getUTCDay() + 6) % 7;
+        weekStart.setUTCDate(weekStart.getUTCDate() - day);
+        start = weekStart;
+        end = new Date(start.getTime() + 7 * 86400000);
+      } else {
+        start = new Date(Date.UTC(by, bm - 1, 1));
+        end = new Date(Date.UTC(by, bm, 1));
+      }
+      const startStr = start.toISOString().slice(0,10);
+      const endStr = end.toISOString().slice(0,10);
+      const spent = allTransactions
+        .filter(t => t.category === b.category && t.date >= startStr && t.date < endStr)
         .reduce((sum, t) => sum + t.amount, 0);
 
       const percentage = b.amount > 0 ? Math.round((spent / b.amount) * 100) : 0;
@@ -38,7 +63,7 @@ export class BudgetService {
 
   static async create(userId: string, data: Omit<IBudget, '_id' | 'userId' | 'createdAt' | 'updatedAt'>) {
     if (!data.category) throw new Error('Danh mục ngân sách không được bỏ trống');
-    if (!data.amount || data.amount <= 0) throw new Error('Hạn mức ngân sách phải lớn hơn 0');
+    if (!data.amount || (!Number.isFinite(Number(data.amount)) || Number(data.amount) <= 0)) throw new Error('Hạn mức ngân sách phải lớn hơn 0');
 
     // Check if budget for category & month already exists
     const currentMonth = data.month || new Date().toISOString().substring(0, 7);
@@ -49,12 +74,13 @@ export class BudgetService {
     }
 
     return await BudgetModel.create({
-      ...data,
       userId,
+      category: data.category,
       amount: Number(data.amount),
       alertThreshold: Number(data.alertThreshold || 80),
       month: currentMonth,
-      period: data.period || 'monthly'
+      period: data.period || 'monthly',
+      notes: data.notes
     });
   }
 
@@ -64,10 +90,27 @@ export class BudgetService {
       throw new Error('Ngân sách không tồn tại hoặc không có quyền truy cập');
     }
 
-    const payload: Partial<IBudget> = { ...data };
-    if (data.amount !== undefined) payload.amount = Number(data.amount);
-    if (data.alertThreshold !== undefined) payload.alertThreshold = Number(data.alertThreshold);
-
+    const payload: Partial<IBudget> = {};
+    if (data.amount !== undefined) {
+      const value = Number(data.amount);
+      if (!Number.isFinite(value) || value <= 0) throw new Error('Hạn mức ngân sách phải lớn hơn 0');
+      payload.amount = value;
+    }
+    if (data.alertThreshold !== undefined) {
+      const value = Number(data.alertThreshold);
+      if (!Number.isFinite(value) || value <= 0 || value > 100) throw new Error('Ngưỡng cảnh báo phải từ 1 đến 100');
+      payload.alertThreshold = value;
+    }
+    if (data.notes !== undefined) {
+      if (typeof data.notes !== 'string') throw new Error('Ghi chú không hợp lệ');
+      payload.notes = data.notes;
+    }
+    if (data.period !== undefined) {
+      if (!['weekly', 'monthly', 'yearly'].includes(data.period)) throw new Error('Kỳ ngân sách không hợp lệ');
+      payload.period = data.period;
+    }
+    // Không cho sửa _id, userId, category, month, createdAt, updatedAt.
+    if (!Object.keys(payload).length) throw new Error('Không có trường được phép cập nhật');
     return await BudgetModel.findByIdAndUpdate(id, payload);
   }
 

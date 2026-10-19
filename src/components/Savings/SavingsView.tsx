@@ -37,6 +37,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
 
   const [goals, setGoals] = useState<ISavingsGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [goalFilter, setGoalFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   // Create / Edit modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -212,9 +213,14 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
 
   const totalAccumulated = goals.reduce((sum, g) => sum + g.currentAmount, 0);
   const totalTarget = goals.reduce((sum, g) => sum + g.targetAmount, 0);
+  const nearlyCompletedCount = goals.filter(g => !g.isCompleted && (g.daysRemaining ?? 9999) >= 0 && (g.daysRemaining ?? 9999) <= 30).length;
+  const totalPercent = totalTarget > 0 ? Math.min(100, Math.round(totalAccumulated / totalTarget * 100)) : 0;
+  const activeGoals = goals.filter(g => !g.isCompleted && (g.percentage ?? 0) < 100);
+  const completedGoals = goals.filter(g => g.isCompleted || (g.percentage ?? 0) >= 100);
+  const visibleGoals = goalFilter === 'all' ? goals : goalFilter === 'completed' ? completedGoals : activeGoals;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="ft-page ft-savings space-y-6 animate-in fade-in duration-200">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -235,29 +241,31 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
         </button>
       </div>
 
-      {/* Savings Summary Banner */}
-      <div className="bg-gradient-to-r from-teal-800 to-emerald-900 rounded-3xl p-6 text-white shadow-lg shadow-teal-950/15">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <span className="text-xs text-emerald-200 font-semibold uppercase tracking-wider block">
-              Tổng tiền tích lũy hiện có
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-black mt-1">
-              {formatCurrency(totalAccumulated, currency)}
-            </h3>
-            <p className="text-xs text-emerald-100/80 mt-1">
-              Mục tiêu tổng: {formatCurrency(totalTarget, currency)} across {goals.length} mục tiêu
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="bg-white/10 backdrop-blur rounded-2xl p-4 text-center">
-              <span className="text-2xl font-black block">
-                {totalTarget > 0 ? Math.round((totalAccumulated / totalTarget) * 100) : 0}%
-              </span>
-              <span className="text-[11px] text-emerald-200">Tiến độ chung</span>
-            </div>
-          </div>
+      {/* Thống kê lấy trực tiếp từ dữ liệu API, không sử dụng số minh họa cố định. */}
+      <div className="ft-summary-grid">
+        <div className="ft-stat-card">
+          <div className="ft-stat-icon bg-emerald-50 text-emerald-600"><Target className="w-5 h-5" /></div>
+          <div><p className="ft-stat-label">Tổng mục tiêu</p><strong className="ft-stat-value">{goals.length}</strong><p className="ft-stat-caption">mục tiêu tiết kiệm</p></div>
+        </div>
+        <div className="ft-stat-card">
+          <div className="ft-stat-icon bg-blue-50 text-blue-600"><PiggyBank className="w-5 h-5" /></div>
+          <div><p className="ft-stat-label">Đã tiết kiệm</p><strong className="ft-stat-value">{formatCurrency(totalAccumulated, currency)}</strong><p className="ft-stat-caption">{totalPercent}% tổng số tiền mục tiêu</p></div>
+        </div>
+        <div className="ft-stat-card">
+          <div className="ft-stat-icon bg-amber-50 text-amber-600"><Clock className="w-5 h-5" /></div>
+          <div><p className="ft-stat-label">Sắp đến hạn</p><strong className="ft-stat-value">{nearlyCompletedCount}</strong><p className="ft-stat-caption">mục tiêu còn ≤ 30 ngày</p></div>
+        </div>
+      </div>
+      <div className="ft-section-heading">
+        <h3>Danh sách mục tiêu</h3>
+        <div className="flex gap-1.5 flex-wrap" role="group" aria-label="Lọc trạng thái mục tiêu tiết kiệm">
+          {([
+            ['all', `Tất cả (${goals.length})`],
+            ['active', `Đang thực hiện (${activeGoals.length})`],
+            ['completed', `Đã hoàn thành (${completedGoals.length})`]
+          ] as const).map(([filter, title]) => (
+            <button type="button" key={filter} onClick={() => setGoalFilter(filter)} aria-pressed={goalFilter === filter} className={`ft-filter-chip ${goalFilter === filter ? 'ft-filter-chip-active' : ''}`}>{title}</button>
+          ))}
         </div>
       </div>
 
@@ -278,139 +286,49 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
             {t('svg.add_new')}
           </button>
         </div>
+      ) : visibleGoals.length === 0 ? (
+        <div className="ft-panel p-8 text-center text-slate-500">Không có mục tiêu thuộc trạng thái đã chọn.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {goals.map((g) => {
+        <div className="grid grid-cols-1 gap-3">
+          {visibleGoals.map((g) => {
             const percent = g.percentage || 0;
             const isCompleted = g.isCompleted || percent >= 100;
 
             return (
-              <div
-                key={g._id}
-                className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow"
-              >
-                <div>
-                  {/* Top line: Name & Status */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 font-bold text-sm">
-                        <Target className="w-5 h-5" />
-                      </div>
+              <article key={g._id} className="ft-goal-card ft-panel p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(290px,.95fr)] gap-4 lg:gap-6 lg:items-center">
+                <div className="flex items-start gap-3.5 min-w-0">
+                  <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0"><Target size={21} /></div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <h4 className="font-bold text-slate-900 text-sm truncate">{g.name}</h4>
-                        <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          Hạn: {g.deadline}
-                        </span>
+                        <h4 className="font-extrabold text-slate-900 text-sm">{g.name}</h4>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">{g.notes || 'Theo dõi tiến độ tiết kiệm của bạn'}</p>
                       </div>
+                      {isCompleted && <span className="ft-status-pill ft-status-ok flex-shrink-0"><Sparkles size={12} className="inline mr-1" />Hoàn thành</span>}
                     </div>
-
-                    {isCompleted ? (
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1 shrink-0">
-                        <Sparkles className="w-3 h-3" />
-                        Đạt 100%
-                      </span>
-                    ) : (
-                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 shrink-0">
-                        {g.daysRemaining} ngày còn lại
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Amounts */}
-                  <div className="mt-3 mb-1.5 flex items-baseline justify-between text-xs">
-                    <span className="text-slate-500">
-                      Tích lũy:{' '}
-                      <strong className="text-emerald-700 font-extrabold text-sm">
-                        {formatCurrency(g.currentAmount, currency)}
-                      </strong>
-                    </span>
-                    <span className="text-slate-400 text-[11px]">
-                      Mục tiêu: {formatCurrency(g.targetAmount, currency)}
-                    </span>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        isCompleted ? 'bg-emerald-500' : 'bg-teal-600'
-                      }`}
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-
-                  <div className="flex justify-between items-center text-[11px] text-slate-500 mt-2">
-                    <span>Còn thiếu: {formatCurrency(Math.max(0, g.targetAmount - g.currentAmount), currency)}</span>
-                    <span className="font-bold text-slate-800">{percent}%</span>
-                  </div>
-
-                  {g.notes && (
-                    <p className="text-[11px] text-slate-400 italic mt-2 line-clamp-2">
-                      &quot;{g.notes}&quot;
-                    </p>
-                  )}
-                </div>
-
-                {/* Bottom Actions: Nạp/Rút & Lịch sử */}
-                <div className="pt-3 mt-4 border-t border-slate-100 space-y-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => {
-                        setActiveActionGoal(g);
-                        setActionType('deposit');
-                        setActionAmount('');
-                        setActionNote('');
-                        setActionError('');
-                      }}
-                      className="flex items-center justify-center gap-1 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors"
-                    >
-                      <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>{t('svg.deposit')}</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setActiveActionGoal(g);
-                        setActionType('withdraw');
-                        setActionAmount('');
-                        setActionNote('');
-                        setActionError('');
-                      }}
-                      className="flex items-center justify-center gap-1 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
-                    >
-                      <ArrowDownLeft className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{t('svg.withdraw')}</span>
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs pt-1 text-slate-400">
-                    <button
-                      onClick={() => setHistoryGoal(g)}
-                      className="flex items-center gap-1 hover:text-slate-700 text-[11px]"
-                    >
-                      <History className="w-3 h-3" />
-                      <span>Lịch sử ({g.history?.length || 0})</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => openEditModal(g)}
-                        className="hover:text-slate-700 p-1"
-                        title="Sửa"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteGoal(g._id)}
-                        className="hover:text-rose-600 p-1"
-                        title="Xóa"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                    <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-xs text-slate-500">
+                      <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-slate-400"/>Hạn hoàn thành: <strong className="text-slate-800">{g.deadline?.split('-').reverse().join('/')}</strong></span>
+                      <span className="flex items-center gap-1.5"><Target className="w-4 h-4 text-slate-400"/>Mục tiêu: <strong className="text-slate-800">{formatCurrency(g.targetAmount, currency)}</strong></span>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-4">
+                      <button type="button" onClick={() => setHistoryGoal(g)} className="inline-flex gap-1 text-xs text-slate-500 hover:text-emerald-700 items-center"><History size={13}/>Lịch sử ({g.history?.length || 0})</button>
+                      <button type="button" onClick={() => handleDeleteGoal(g._id)} className="inline-flex gap-1 text-xs text-slate-400 hover:text-rose-600 items-center"><Trash2 size={13}/>Xóa mục tiêu</button>
                     </div>
                   </div>
                 </div>
-              </div>
+                <div className="min-w-0">
+                  <div className="flex items-end justify-between gap-3 mb-2">
+                    <div><strong className="text-base text-emerald-600 font-extrabold">{formatCurrency(g.currentAmount, currency)}</strong><p className="text-xs text-slate-400">/{formatCurrency(g.targetAmount, currency)}</p></div>
+                    <strong className="text-xs text-emerald-700">{Math.round(percent)}%</strong>
+                  </div>
+                  <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full bg-emerald-500 transition-all" style={{width:`${Math.max(0, Math.min(100, percent))}%`}} /></div>
+                  <div className="flex flex-wrap items-center justify-end gap-2 mt-3">
+                    <button type="button" onClick={() => { setActiveActionGoal(g); setActionType('deposit'); setActionAmount(''); setActionNote(''); setActionError(''); }} className="ft-primary-button flex items-center gap-1.5 px-3 py-2 text-xs font-semibold"><ArrowUpRight size={14}/>{t('svg.deposit')}</button>
+                    <button type="button" onClick={() => openEditModal(g)} className="ft-secondary-button flex items-center gap-1.5 px-3 py-2 text-xs font-semibold"><Edit size={14}/>Chỉnh sửa</button>
+                    <button type="button" onClick={() => { setActiveActionGoal(g); setActionType('withdraw'); setActionAmount(''); setActionNote(''); setActionError(''); }} className="ft-secondary-button flex items-center gap-1.5 px-3 py-2 text-xs font-semibold"><ArrowDownLeft size={14}/>{t('svg.withdraw')}</button>
+                  </div>
+                </div>
+              </article>
             );
           })}
         </div>

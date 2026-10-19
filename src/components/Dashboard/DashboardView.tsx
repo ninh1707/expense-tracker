@@ -13,7 +13,6 @@ import {
   Layers
 } from 'lucide-react';
 import {
-  ResponsiveContainer,
   AreaChart,
   Area,
   XAxis,
@@ -29,6 +28,7 @@ import { api } from '../../services/api';
 import { formatCurrency, getCategoryById } from '../../utils/categories';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { CategoryIcon } from '../common/CategoryIcon';
 
 interface DashboardViewProps {
   currency: string;
@@ -104,7 +104,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Welcome Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-emerald-950/20">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-800 via-emerald-800 to-teal-900 rounded-3xl p-5 sm:p-7 text-white shadow-md shadow-emerald-950/10">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-700/50 text-emerald-200 text-xs font-semibold mb-3">
             <Sparkles className="w-3.5 h-3.5" />
@@ -206,7 +206,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Main Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Trend Area Chart */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="lg:col-span-2 min-w-0 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-bold text-slate-900 text-sm sm:text-base">
@@ -223,9 +223,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </button>
           </div>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <div className="w-full min-w-0" style={{ height: 256, minHeight: 256 }}>
+            {/* Explicit SVG dimensions prevent an unmeasured container from hiding marks. */}
+              <AreaChart width={780} height={256} style={{ width: '100%', height: '100%' }} data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
@@ -249,12 +249,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <Area type="monotone" dataKey="Thu" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#incomeGrad)" />
                 <Area type="monotone" dataKey="Chi" stroke="#ef4444" strokeWidth={2.5} fillOpacity={1} fill="url(#expenseGrad)" />
               </AreaChart>
-            </ResponsiveContainer>
+            
           </div>
         </div>
 
         {/* Category Breakdown Donut */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
+        <div className="min-w-0 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="font-bold text-slate-900 text-sm sm:text-base">
               {t('dash.category_title')}
@@ -262,10 +262,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <p className="text-xs text-slate-500 mb-2">Tỷ lệ phân bổ chi phí</p>
           </div>
 
-          <div className="h-52 w-full flex items-center justify-center">
+          <div className="w-full min-w-0 flex items-center justify-center" style={{ height: 208, minHeight: 208 }}>
             {categoryChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <PieChart width={360} height={208} style={{ width: '100%', height: '100%' }}>
                   <Pie
                     data={categoryChartData}
                     cx="50%"
@@ -284,7 +283,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', color: '#fff', fontSize: '12px', border: 'none' }}
                   />
                 </PieChart>
-              </ResponsiveContainer>
+              
             ) : (
               <div className="text-center text-slate-400 py-8">
                 <Layers className="w-8 h-8 mx-auto mb-2 opacity-40" />
@@ -341,7 +340,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 return (
                   <div key={b._id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
                     <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="font-bold text-slate-800">
+                      <span className="font-bold text-slate-800 inline-flex items-center gap-1.5">
+                        <CategoryIcon categoryId={b.category} variant="inline" size={15} />
                         {language === 'vi' ? cat.labelVi : cat.labelEn}
                       </span>
                       <span
@@ -412,12 +412,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       : 'bg-amber-50/60 border-amber-200'
                   }`}
                 >
-                  <div className="min-w-0">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <CategoryIcon categoryId={r.category} size={16} className="h-8 w-8" />
+                    <div className="min-w-0">
                     <p className="text-xs font-bold text-slate-800 truncate">{r.title}</p>
                     <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
                       <Calendar className="w-3 h-3" />
                       <span>Đến hạn: {r.nextDueDate}</span>
                     </p>
+                    </div>
                   </div>
                   <div className="text-right shrink-0">
                     <span className="text-xs font-bold text-slate-900 block">
@@ -470,12 +473,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-white font-bold text-xs"
-                        style={{ backgroundColor: cat.color }}
-                      >
-                        {isIncome ? '+' : '-'}
-                      </div>
+                      <CategoryIcon categoryId={tItem.category} size={17} className="w-8 h-8" />
                       <div className="min-w-0">
                         <p className="text-xs font-bold text-slate-800 truncate">
                           {tItem.description || (language === 'vi' ? cat.labelVi : cat.labelEn)}

@@ -1,7 +1,8 @@
+import { UserModel } from '../models/User';
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'finance_manager_super_secret_jwt_key_2026';
+import { getJwtSecret } from '../utils/jwtSecret';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -10,20 +11,22 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+export const authenticateToken = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    res.status(401).json({ success: false, message: 'Authentication required. No token provided.' });
+    res.status(401).json({ success: false, message: 'Vui lòng đăng nhập.' });
     return;
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
+    const decoded = jwt.verify(token, getJwtSecret()) as { userId: string; email: string };
+    const account = await UserModel.findById(decoded.userId);
+    if (!account || account.disabled) { res.status(401).json({ success: false, message: 'Tài khoản đã bị khóa hoặc không tồn tại' }); return; }
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(403).json({ success: false, message: 'Invalid or expired authentication token.' });
+    res.status(401).json({ success: false, message: 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.' });
   }
 };

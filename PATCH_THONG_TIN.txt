@@ -1,0 +1,16 @@
+Bản vá so sánh FinTrack_VN_FIX_LINT_TEST_JWT_2026_10_19.zip với FinTrack_VN_ICON_DANH_MUC_DONG_BO_2026_10_19.zip.
+Giải nén đè vào ngay thư mục expense-tracker-main (không phải thư mục cha).
+Không chứa .env, node_modules hoặc dữ liệu người dùng.
+Không cần npm install nếu package.json không đổi.
+Tệp cập nhật:
+CAP_NHAT_ICON_DANH_MUC_19_10_2026.md
+CAP_NHAT_GIAO_DIEN_THEO_ANH_2026_10_19.md
+src/index.css
+src/components/Dashboard/DashboardView.tsx
+src/components/Savings/SavingsView.tsx
+src/components/Reports/PeriodCategoryReport.tsx
+src/components/Recurring/RecurringTable.tsx
+src/components/Recurring/RecurringView.tsx
+src/components/Budgets/BudgetsView.tsx
+src/components/common/CategoryIcon.tsx
+src/components/Transactions/TransactionsView.tsx

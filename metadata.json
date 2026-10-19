@@ -2,5 +2,5 @@
   "name": "Quản Lý Chi Tiêu Cá Nhân",
   "description": "Hệ thống quản lý chi tiêu cá nhân, theo dõi thu chi, ngân sách, mục tiêu tiết kiệm và thanh toán định kỳ với báo cáo trực quan.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

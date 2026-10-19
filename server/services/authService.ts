@@ -6,13 +6,13 @@ import { BudgetModel } from '../models/Budget';
 import { SavingsGoalModel } from '../models/SavingsGoal';
 import { RecurringPaymentModel } from '../models/RecurringPayment';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'finance_manager_super_secret_jwt_key_2026';
+import { getJwtSecret } from '../utils/jwtSecret';
 
 export class AuthService {
   static async register(name: string, email: string, password: string, currency = 'VND', language = 'vi') {
     const existing = await UserModel.findOne({ email: email.toLowerCase().trim() });
     if (existing) {
-      throw new Error('Email đã được sử dụng / Email already in use');
+      throw new Error('Email đã được sử dụng');
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -22,12 +22,13 @@ export class AuthService {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password: hashedPassword,
+      role: 'user',
       currency: currency || 'VND',
       language: language || 'vi',
       monthlyIncomeTarget: 25000000
     });
 
-    const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: user._id, email: user.email }, getJwtSecret(), { expiresIn: '7d' });
     const { password: _, ...userWithoutPass } = user;
     return { user: userWithoutPass, token };
   }
@@ -35,15 +36,20 @@ export class AuthService {
   static async login(email: string, password: string) {
     const user = await UserModel.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
-      throw new Error('Email hoặc mật khẩu không chính xác / Invalid email or password');
+      throw new Error('Email hoặc mật khẩu không đúng');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new Error('Email hoặc mật khẩu không chính xác / Invalid email or password');
+      throw new Error('Email hoặc mật khẩu không đúng');
     }
 
-    const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+    // Chỉ thông báo khóa tài khoản sau khi mật khẩu đúng, tránh dò email tồn tại.
+    if (user.disabled) {
+      throw new Error('Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ.');
+    }
+
+    const token = jwt.sign({ userId: user._id, email: user.email }, getJwtSecret(), { expiresIn: '7d' });
     const { password: _, ...userWithoutPass } = user;
     return { user: userWithoutPass, token };
   }
@@ -51,7 +57,7 @@ export class AuthService {
   static async getProfile(userId: string) {
     const user = await UserModel.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Không tìm thấy người dùng');
     }
     const { password: _, ...userWithoutPass } = user;
     return userWithoutPass;
@@ -60,7 +66,7 @@ export class AuthService {
   static async updateProfile(userId: string, data: Partial<IUser>) {
     const user = await UserModel.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Không tìm thấy người dùng');
     }
 
     const updatePayload: Partial<IUser> = {};
@@ -70,7 +76,7 @@ export class AuthService {
     if (data.monthlyIncomeTarget !== undefined) updatePayload.monthlyIncomeTarget = Number(data.monthlyIncomeTarget);
 
     const updated = await UserModel.findByIdAndUpdate(userId, updatePayload);
-    if (!updated) throw new Error('User not found');
+    if (!updated) throw new Error('Không tìm thấy người dùng');
     const { password: _, ...userWithoutPass } = updated;
     return userWithoutPass;
   }
@@ -80,6 +86,9 @@ export class AuthService {
    * so user can immediately test all dashboard features with high fidelity!
    */
   static async seedDemoUser() {
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_DEMO_LOGIN !== 'true') {
+      throw new Error('Chức năng đăng nhập thử không được bật.');
+    }
     const demoEmail = 'demo@taichinh.vn';
     let user = await UserModel.findOne({ email: demoEmail });
 
@@ -230,7 +239,7 @@ export class AuthService {
       }
     }
 
-    const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: user._id, email: user.email }, getJwtSecret(), { expiresIn: '7d' });
     const { password: _, ...userWithoutPass } = user;
     return { user: userWithoutPass, token };
   }
@@ -244,8 +253,8 @@ export class AuthService {
       throw new Error('Mật khẩu hiện tại không chính xác');
     }
 
-    if (!newPass || newPass.length < 6) {
-      throw new Error('Mật khẩu mới phải có ít nhất 6 ký tự');
+    if (!newPass || newPass.length < 8) {
+      throw new Error('Mật khẩu mới phải có ít nhất 8 ký tự');
     }
 
     const salt = await bcrypt.genSalt(10);

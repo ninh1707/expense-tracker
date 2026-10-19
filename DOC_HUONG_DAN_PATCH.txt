@@ -1,0 +1,26 @@
+FINTRACK VN - PATCH SAU CODE REVIEW 19/10/2026
+
+DÙNG CHO: thư mục expense-tracker-main, bản gốc FinTrack_VN_FIX_LINT_TEST_JWT_2026_10_19 đã được cập nhật các patch UI/Admin trước đó.
+
+SỬA:
+- Nhật ký Admin hiển thị tên/email người thao tác và đối tượng, giữ ID phục vụ truy vết; không chuyển mật khẩu vào API.
+- API log MongoDB bổ sung snapshot tên/email cho sự kiện mới; log cũ cố gắng truy vấn tên/email từ tài khoản hiện hữu.
+- Giới hạn whitelist các trường được phép cập nhật/tạo, loại bỏ mass assignment userId/_id/history/createdAt.
+- GET /api/transactions hỗ trợ page, limit (1<=limit<=100) và trả metadata pagination; không truyền tham số vẫn trả danh sách như cũ.
+- Lọc giao dịch theo số tiền/phương thức thanh toán nhất quán trong hai kho; từ chối query không đúng kiểu.
+- timeReportRoutes.ts bắt lỗi async, thông điệp lỗi 500 được ẩn trong production.
+- tests/massAssignment.test.ts bổ sung 5 bài kiểm tra hồi quy (CHƯA chạy được trong môi trường xây dựng này).
+
+SAO LƯU VÀ CẬP NHẬT TRÊN WINDOWS (PowerShell đang ở expense-tracker-main):
+1. Dừng server Ctrl+C.
+2. Sao lưu dữ liệu JSON nếu có:
+   if (Test-Path .\data\db.json) { Copy-Item .\data\db.json .\data\db.backup-truoc-patch.json }
+3. Tải file ZIP PATCH về thư mục Downloads.
+4. Expand-Archive -Path "$env:USERPROFILE\Downloads\fintrack-patch-review-19-10-2026.zip" -DestinationPath (Get-Location).Path -Force
+5. npm run lint
+6. npm test
+7. npm run build
+8. npm run dev
+
+Lưu ý: zip không đụng data/db.json hay .env; MongoDB cần sao lưu riêng bằng mongodump hoặc export từ Compass.
+Những ca thử MongoDB thực tế và giao diện vẫn cần xác minh trên máy người dùng.

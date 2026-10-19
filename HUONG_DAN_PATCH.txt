@@ -1,0 +1,29 @@
+FINTRACK VN — PATCH SỬA 14 LỖI TYPESCRIPT VÀ 2 TEST THẤT BẠI
+
+Bản gốc: FinTrack_VN_FIX_LINT_TEST_JWT_2026_10_19 + các patch giao diện,
+Admin MongoDB và patch review đã áp dụng trong cuộc trò chuyện.
+
+HƯỚNG DẪN (Windows PowerShell)
+1. Dừng npm run dev (Ctrl+C).
+2. Sao lưu dữ liệu JSON nếu muốn:
+   Copy-Item .\data\db.json .\data\db.backup-truoc-typescript-fix.json
+3. Giải nén patch này NGAY TẠI thư mục expense-tracker-main (không giải nén thư mục con):
+   Expand-Archive -Path "$env:USERPROFILE\Downloads\fintrack-fix-14-ts-errors-2-tests.zip" -DestinationPath (Get-Location).Path -Force
+4. Chạy:
+   npm run lint
+   npm test
+   npm run build
+   npm run dev
+
+PATCH CHỈ CÓ FILE TS/TSX, KHÔNG CÓ .env, db.json, node_modules.
+- adminMongoRoutes: gõ đúng _id:string theo schema MongoDB trong dự án.
+- BudgetsView và RecurringView: danh sách danh mục string[], không unknown.
+- transactionService/savingsService: lọc trường cập nhật để không có mass assignment.
+- budgetService/recurringService: giới hạn trường cập nhật tương tự.
+- RecurringView: gửi reminderDaysBefore thay vì reminderDays (khớp backend).
+
+KIỂM TRA TRONG MÔI TRƯỜNG TẠO PATCH:
+- 61 tệp TS/TSX parse được (0 lỗi cú pháp).
+- 8 kiểm tra mô phỏng cập nhật nghiệp vụ thành công bằng các mock repository.
+- Không thể chạy npm run lint/test/build thực sự vì môi trường thiếu dependencies;
+  cần xác thực lại bằng các lệnh trên máy của bạn.

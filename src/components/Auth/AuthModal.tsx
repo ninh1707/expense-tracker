@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   X,
   Lock,
@@ -7,7 +7,10 @@ import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
-  Wallet
+  Wallet,
+  Eye,
+  EyeOff,
+  CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -29,12 +32,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, canClose 
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    // Autofill / password managers may update input DOM values without a React change event.
+    // Read the actual inputs on submit to compare exactly what the browser displays.
+    const enteredPassword = passwordRef.current?.value ?? password;
+    const enteredConfirmation = confirmPasswordRef.current?.value ?? confirmPassword;
+    let mismatchDetected = false;
 
     try {
       if (isRegister) {
@@ -48,24 +60,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, canClose 
         if (!emailRegex.test(email.trim())) {
           throw new Error('Email không đúng định dạng');
         }
-        if (!password || password.length < 6) {
+        if (!enteredPassword || enteredPassword.length < 6) {
           throw new Error('Mật khẩu tối thiểu phải từ 6 ký tự');
         }
-        if (password !== confirmPassword) {
-          throw new Error('Mật khẩu xác nhận không khớp');
+        if (enteredPassword !== enteredConfirmation) {
+          mismatchDetected = true;
+          throw new Error('Mật khẩu xác nhận không khớp. Hãy bấm biểu tượng con mắt để kiểm tra cả hai ô (kể cả khoảng trắng).');
         }
         setLoading(true);
-        await register(name.trim(), email.trim(), password);
+        await register(name.trim(), email.trim(), enteredPassword);
       } else {
-        if (!email.trim() || !password) {
+        if (!email.trim() || !enteredPassword) {
           throw new Error('Vui lòng nhập đầy đủ email và mật khẩu');
         }
         setLoading(true);
-        await login(email.trim(), password);
+        await login(email.trim(), enteredPassword);
       }
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Thao tác không thành công');
+      setError(err instanceof Error ? err.message : 'Thao tác không thành công');
+      // Giữ hai ô để người dùng kiểm tra trực quan nếu xác nhận không khớp.
+      // Với các lỗi khác, xóa mật khẩu như hành vi cũ để tránh giữ thông tin nhạy cảm.
+      if (mismatchDetected) {
+        requestAnimationFrame(() => confirmPasswordRef.current?.focus());
+      } else {
+        setPassword('');
+        setConfirmPassword('');
+        requestAnimationFrame(() => passwordRef.current?.focus());
+      }
     } finally {
       setLoading(false);
     }
@@ -110,7 +132,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, canClose 
         </div>
 
         {error && (
-          <div className="p-3 mb-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+          <div role="alert" aria-live="assertive" className="p-3 mb-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
             {error}
           </div>
         )}
@@ -134,7 +156,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, canClose 
           <div className="flex-grow border-t border-slate-200" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5">
+        <form onSubmit={handleSubmit} noValidate className="space-y-3.5">
           {isRegister && (
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -178,14 +200,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, canClose 
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
-                type="password"
+                ref={passwordRef}
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete={isRegister ? 'new-password' : 'current-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="•••••••• (Tối thiểu 6 ký tự)"
                 required
-                minLength={6}
-                className="w-full text-xs font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 outline-none focus:border-emerald-500"
+                minLength={isRegister ? 6 : undefined}
+                className="w-full text-xs font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-11 py-2.5 outline-none focus:border-emerald-500"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                aria-pressed={showPassword}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-emerald-700 focus-visible:outline-2 focus-visible:outline-emerald-600"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
@@ -197,15 +231,33 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, canClose 
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  ref={confirmPasswordRef}
+                  name="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Nhập lại mật khẩu"
                   required
                   minLength={6}
-                  className="w-full text-xs font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 outline-none focus:border-emerald-500"
+                  className="w-full text-xs font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-11 py-2.5 outline-none focus:border-emerald-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((current) => !current)}
+                  aria-label={showConfirmPassword ? 'Ẩn mật khẩu xác nhận' : 'Hiện mật khẩu xác nhận'}
+                  aria-pressed={showConfirmPassword}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-emerald-700 focus-visible:outline-2 focus-visible:outline-emerald-600"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
+              {confirmPassword.length > 0 && password.length > 0 && (
+                <p aria-live="polite" className={`mt-1 flex items-center gap-1 text-[11px] font-medium ${password === confirmPassword ? 'text-emerald-700' : 'text-rose-600'}`}>
+                  {password === confirmPassword ? <CheckCircle2 className="h-3.5 w-3.5" /> : null}
+                  {password === confirmPassword ? 'Mật khẩu xác nhận đã khớp' : 'Mật khẩu xác nhận chưa khớp'}
+                </p>
+              )}
             </div>
           )}
 
@@ -224,6 +276,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, canClose 
             onClick={() => {
               setIsRegister(!isRegister);
               setError('');
+              setPassword('');
+              setConfirmPassword('');
+              setShowPassword(false);
+              setShowConfirmPassword(false);
             }}
             className="text-xs text-emerald-700 hover:text-emerald-800 font-semibold"
           >

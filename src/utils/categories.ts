@@ -84,7 +84,7 @@ export const CATEGORIES: CategoryInfo[] = [
   },
   {
     id: 'freelance',
-    labelVi: 'Thu nhập thêm / Freelance',
+    labelVi: 'Thu nhập từ công việc tự do',
     labelEn: 'Freelance & Side Gig',
     icon: 'Laptop',
     color: '#0284c7',

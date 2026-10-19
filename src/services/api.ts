@@ -19,10 +19,16 @@ const getHeaders = () => {
 };
 
 async function handleResponse<T>(res: Response): Promise<T> {
-  const json = await res.json();
-  if (!res.ok || json.success === false) {
-    throw new Error(json.message || 'Request failed');
+  const json = await res.json().catch(() => null);
+  if ((res.status === 401 || (res.status === 403 && /phiên đăng nhập|hết hạn|token/i.test(String(json?.message || '')))) &&
+      !res.url.endsWith('/auth/login') && !res.url.endsWith('/auth/register') &&
+      !res.url.endsWith('/auth/demo') && localStorage.getItem('auth_token')) {
+    window.dispatchEvent(new Event('fintrack:session-expired'));
   }
+  if (!res.ok || json?.success === false) {
+    throw new Error(json?.message || `Yêu cầu thất bại (HTTP ${res.status}). Vui lòng thử lại.`);
+  }
+  if (!json) throw new Error('Phản hồi máy chủ không hợp lệ. Vui lòng thử lại.');
   return json.data !== undefined ? json.data : json;
 }
 
@@ -350,11 +356,17 @@ export const api = {
       };
     },
 
-    async exportCSV(_period?: string) {
+    async exportCSV(period: string = 'month') {
+      const now = new Date();
+      const end = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const start = new Date(now.getFullYear(), now.getMonth() - (period === 'quarter' ? 2 : period === 'year' ? 11 : 0), 1);
+      const startDate = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-01`;
+      const query = new URLSearchParams({ format: 'csv', startDate, endDate: end });
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${API_BASE}/reports/export?format=csv`, {
+      const res = await fetch(`${API_BASE}/reports/export?${query.toString()}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
+      if (!res.ok) throw new Error(`Không thể xuất CSV (HTTP ${res.status})`);
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -363,6 +375,7 @@ export const api = {
       document.body.appendChild(a);
       a.click();
       a.remove();
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
     },
 
     async exportJSON() {
@@ -373,3 +386,8 @@ export const api = {
     }
   }
 };
+
+export async function fetchCategories(): Promise<Array<{_id:string;name:string;type:'income'|'expense';active:boolean}>> {
+ const res = await fetch('/api/admin/categories/active',{headers:getHeaders()});
+ return (await handleResponse<{items:Array<{_id:string;name:string;type:'income'|'expense';active:boolean}>}>(res)).items;
+}

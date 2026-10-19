@@ -28,7 +28,7 @@ export class RecurringService {
 
   static async create(userId: string, data: Omit<IRecurringPayment, '_id' | 'userId' | 'createdAt' | 'updatedAt' | 'paymentHistory'>) {
     if (!data.title) throw new Error('Tên khoản thanh toán không được để trống');
-    if (!data.amount || data.amount <= 0) throw new Error('Số tiền phải lớn hơn 0');
+    if (!data.amount || (!Number.isFinite(Number(data.amount)) || Number(data.amount) <= 0)) throw new Error('Số tiền phải lớn hơn 0');
 
     // Calculate initial nextDueDate if not provided
     let nextDueDate = data.nextDueDate;
@@ -41,13 +41,17 @@ export class RecurringService {
     }
 
     return await RecurringPaymentModel.create({
-      ...data,
       userId,
+      title: data.title,
+      type: data.type,
+      category: data.category,
+      frequency: data.frequency,
       amount: Number(data.amount),
       dueDate: Number(data.dueDate || 1),
       reminderDaysBefore: Number(data.reminderDaysBefore || 3),
       nextDueDate,
       status: data.status || 'active',
+      notes: data.notes,
       autoRecordTransaction: data.autoRecordTransaction !== undefined ? data.autoRecordTransaction : true
     });
   }
@@ -58,11 +62,47 @@ export class RecurringService {
       throw new Error('Khoản thanh toán định kỳ không tồn tại');
     }
 
-    const payload: Partial<IRecurringPayment> = { ...data };
-    if (data.amount !== undefined) payload.amount = Number(data.amount);
-    if (data.dueDate !== undefined) payload.dueDate = Number(data.dueDate);
-    if (data.reminderDaysBefore !== undefined) payload.reminderDaysBefore = Number(data.reminderDaysBefore);
-
+    const payload: Partial<IRecurringPayment> = {};
+    for (const key of ['title', 'category', 'nextDueDate', 'notes'] as const) {
+      const value = data[key];
+      if (value !== undefined) {
+        if (typeof value !== 'string' || (key !== 'notes' && !value.trim())) throw new Error('Thông tin khoản định kỳ không hợp lệ');
+        payload[key] = value;
+      }
+    }
+    if (data.amount !== undefined) {
+      const amount = Number(data.amount);
+      if (!Number.isFinite(amount) || amount <= 0) throw new Error('Số tiền phải lớn hơn 0');
+      payload.amount = amount;
+    }
+    if (data.dueDate !== undefined) {
+      const day = Number(data.dueDate);
+      if (!Number.isInteger(day) || day < 1 || day > 31) throw new Error('Ngày đến hạn không hợp lệ');
+      payload.dueDate = day;
+    }
+    if (data.reminderDaysBefore !== undefined) {
+      const days = Number(data.reminderDaysBefore);
+      if (!Number.isInteger(days) || days < 0 || days > 365) throw new Error('Số ngày nhắc không hợp lệ');
+      payload.reminderDaysBefore = days;
+    }
+    if (data.type !== undefined) {
+      if (!['income', 'expense'].includes(data.type)) throw new Error('Loại giao dịch không hợp lệ');
+      payload.type = data.type;
+    }
+    if (data.frequency !== undefined) {
+      if (!['daily', 'weekly', 'monthly', 'yearly'].includes(data.frequency)) throw new Error('Chu kỳ không hợp lệ');
+      payload.frequency = data.frequency;
+    }
+    if (data.status !== undefined) {
+      if (!['active', 'paused'].includes(data.status)) throw new Error('Trạng thái không hợp lệ');
+      payload.status = data.status;
+    }
+    if (data.autoRecordTransaction !== undefined) {
+      if (typeof data.autoRecordTransaction !== 'boolean') throw new Error('Cờ ghi giao dịch không hợp lệ');
+      payload.autoRecordTransaction = data.autoRecordTransaction;
+    }
+    // paymentHistory, _id, userId và timestamps không được nhận từ request.
+    if (!Object.keys(payload).length) throw new Error('Không có trường được phép cập nhật');
     return await RecurringPaymentModel.findByIdAndUpdate(id, payload);
   }
 
@@ -100,27 +140,23 @@ export class RecurringService {
     }
 
     // Advance nextDueDate based on frequency
-    const currentNext = new Date(item.nextDueDate);
-    let nextDate = new Date(currentNext);
-
+    // Ngày tài chính dạng YYYY-MM-DD: tính theo UTC để không lệch múi giờ.
+    const [dueYear, dueMonth, dueDay] = item.nextDueDate.split('-').map(Number);
+    const nextDate = new Date(Date.UTC(dueYear, dueMonth - 1, dueDay));
+    const advanceMonth = (months: number) => {
+      const startOfTarget = new Date(Date.UTC(dueYear, dueMonth - 1 + months, 1));
+      const lastDay = new Date(Date.UTC(startOfTarget.getUTCFullYear(), startOfTarget.getUTCMonth() + 1, 0)).getUTCDate();
+      startOfTarget.setUTCDate(Math.min(dueDay, lastDay));
+      return startOfTarget;
+    };
+    let advanced: Date;
     switch (item.frequency) {
-      case 'daily':
-        nextDate.setDate(nextDate.getDate() + 1);
-        break;
-      case 'weekly':
-        nextDate.setDate(nextDate.getDate() + 7);
-        break;
-      case 'monthly':
-        nextDate.setMonth(nextDate.getMonth() + 1);
-        break;
-      case 'yearly':
-        nextDate.setFullYear(nextDate.getFullYear() + 1);
-        break;
-      default:
-        nextDate.setMonth(nextDate.getMonth() + 1);
+      case 'daily': advanced = new Date(nextDate.getTime() + 86400000); break;
+      case 'weekly': advanced = new Date(nextDate.getTime() + 7 * 86400000); break;
+      case 'yearly': advanced = advanceMonth(12); break;
+      default: advanced = advanceMonth(1); break;
     }
-
-    const nextDueDateStr = nextDate.toISOString().split('T')[0];
+    const nextDueDateStr = advanced.toISOString().split('T')[0];
 
     const newPaymentHistory = [
       ...(item.paymentHistory || []),

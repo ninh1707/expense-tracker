@@ -1,6 +1,7 @@
 import { TransactionModel, ITransaction } from '../models/Transaction';
 import { BudgetModel } from '../models/Budget';
 import { SavingsGoalModel } from '../models/SavingsGoal';
+import { categoryLabelVi, paymentLabelVi } from '../utils/reportLabels';
 
 export class ReportService {
   static async getPeriodReport(userId: string, startDate?: string, endDate?: string) {
@@ -125,8 +126,9 @@ export class ReportService {
     };
   }
 
-  static async exportData(userId: string, format: 'json' | 'csv') {
-    const transactions = await TransactionModel.find({ userId });
+  static async exportData(userId: string, format: 'json' | 'csv', startDate?: string, endDate?: string) {
+    const allTransactions = await TransactionModel.find({ userId });
+    const transactions = allTransactions.filter(t => (!startDate || t.date >= startDate) && (!endDate || t.date <= endDate));
     const budgets = await BudgetModel.find({ userId });
     const goals = await SavingsGoalModel.find({ userId });
 
@@ -139,23 +141,19 @@ export class ReportService {
       };
     }
 
-    // CSV format for transactions
+    // UTF-8 BOM helps Excel on Windows recognize Vietnamese text.
+    // Semicolon separates columns for common Vietnamese Excel regional settings.
+    const escapeCell = (value: unknown) => {
+      let text = String(value ?? '');
+      // Tránh Excel diễn giải nội dung người dùng nhập thành công thức.
+      if (/^[\s]*[=+@\-]/.test(text) && !/^-?\d+(?:\.\d+)?$/.test(text.trim())) text = '\'' + text;
+      return `"${text.replace(/"/g, '""')}"`;
+    };
     const headers = ['Mã giao dịch', 'Loại', 'Số tiền', 'Danh mục', 'Ngày', 'Phương thức', 'Mô tả'];
     const rows = transactions.map(t => [
-      t._id,
-      t.type === 'income' ? 'Thu nhập' : 'Chi tiêu',
-      t.amount,
-      t.category,
-      t.date,
-      t.paymentMethod,
-      `"${(t.description || '').replace(/"/g, '""')}"`
+      t._id, t.type === 'income' ? 'Thu nhập' : 'Chi tiêu', t.amount,
+      categoryLabelVi(t.category), t.date, paymentLabelVi(t.paymentMethod), t.description || ''
     ]);
-
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(r => r.join(','))
-    ].join('\n');
-
-    return csvContent;
+    return '\uFEFF' + [headers, ...rows].map(row => row.map(escapeCell).join(';')).join('\r\n');
   }
 }

@@ -1,0 +1,18 @@
+FINTRACK VN - Patch form dang ky/xac nhan mat khau
+
+File duoc cap nhat:
+  src/components/Auth/AuthModal.tsx
+
+Thay doi:
+- Them nut hien/an mat khau cho ca hai o.
+- Hien thi trang thai khop/chua khop ngay khi nhap.
+- Xac nhan dung gia tri input thuc te khi submit (ke ca truong hop autofill).
+- Them autocomplete=new-password cho o xac nhan.
+- Giu nguyen gia tri hai o neu bi loi xac nhan, de nguoi dung so sanh (khong can gui mat khau cho ai).
+
+Cach cap nhat (PowerShell tai thu muc expense-tracker-main):
+  Expand-Archive -Path "$env:USERPROFILE\Downloads\fintrack-fix-confirm-password.zip" -DestinationPath (Get-Location).Path -Force
+
+Luu y: Chi co giao dien dang ky thay doi. File data/db.json, .env, MongoDB, node_modules khong bi dong cham.
+Neu npm run dev dang chay, thu F5 (hoac Ctrl+Shift+R) tren trinh duyet.
+Neu site khong tu cap nhat, dung Ctrl+C va chay lai npm run dev.

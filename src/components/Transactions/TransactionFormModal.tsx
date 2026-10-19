@@ -12,6 +12,7 @@ import {
 import { ITransaction, TransactionType } from '../../types';
 import { CATEGORIES, PAYMENT_METHODS } from '../../utils/categories';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { fetchCategories } from '../../services/api';
 
 interface TransactionFormModalProps {
   isOpen: boolean;
@@ -30,10 +31,49 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
 }) => {
   const { t, language } = useLanguage();
 
+  const [commonCategories, setCommonCategories] = useState<typeof CATEGORIES>([]);
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
+  const [categoriesFailed, setCategoriesFailed] = useState(false);
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    setCategoriesLoaded(false);
+    setCategoriesFailed(false);
+    fetchCategories().then(items => {
+      if (cancelled) return;
+      // Presentation only: use the established category palette for API categories.
+      // IDs, API payload, filtering and event behavior remain unchanged.
+      const categoryPalette = [
+        ['#f97316', '#fff7ed'], ['#ec4899', '#fdf2f8'],
+        ['#3b82f6', '#eff6ff'], ['#ef4444', '#fef2f2'],
+        ['#8b5cf6', '#f5f3ff'], ['#06b6d4', '#ecfeff'],
+        ['#10b981', '#ecfdf5'], ['#6366f1', '#eef2ff']
+      ];
+      const mapped = items.filter(c => c.active && (c.type === 'income' || c.type === 'expense'))
+        .map((c, index) => {
+          const existing = CATEGORIES.find(item => item.labelVi === c.name || item.id === c._id);
+          const palette = categoryPalette[index % categoryPalette.length];
+          return {
+            id: c._id,
+            type: c.type,
+            labelVi: c.name,
+            labelEn: c.name,
+            icon: 'Tag', color: existing?.color || palette[0], bgColor: existing?.bgColor || palette[1]
+          };
+        });
+      setCommonCategories(mapped);
+      setCategoriesLoaded(true);
+    }).catch(() => {
+      if (!cancelled) { setCommonCategories([]); setCategoriesFailed(true); }
+    });
+    return () => { cancelled = true; };
+  }, [isOpen]);
+  // Use the server's active categories when available; built-in defaults are a fallback only.
+  const allCategories = categoriesLoaded ? commonCategories : (categoriesFailed ? CATEGORIES : []);
   const [type, setType] = useState<TransactionType>('expense');
   const [amount, setAmount] = useState<number | string>('');
   const [category, setCategory] = useState<string>('food');
-  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`);
   const [description, setDescription] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('bank_transfer');
   const [tagsInput, setTagsInput] = useState<string>('');
@@ -53,7 +93,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
       setType('expense');
       setAmount('');
       setCategory('food');
-      setDate(new Date().toISOString().split('T')[0]);
+      setDate(`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`);
       setDescription('');
       setPaymentMethod('bank_transfer');
       setTagsInput('');
@@ -64,11 +104,8 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   // If type changes, ensure valid default category
   const handleTypeChange = (newType: TransactionType) => {
     setType(newType);
-    if (newType === 'income' && category === 'food') {
-      setCategory('salary');
-    } else if (newType === 'expense' && (category === 'salary' || category === 'freelance')) {
-      setCategory('food');
-    }
+    const validForNewType = allCategories.some(c => c.id === category && (c.type === 'both' || c.type === newType));
+    if (!validForNewType) setCategory(allCategories.find(c => c.type === newType)?.id || '');
   };
 
   const handleQuickAddAmount = (addValue: number) => {
@@ -79,11 +116,15 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const numAmount = Number(amount);
-    if (!numAmount || numAmount <= 0) {
+    if (!Number.isFinite(numAmount) || numAmount <= 0) {
       setError(language === 'vi' ? 'Vui lòng nhập số tiền hợp lệ (> 0)' : 'Please enter a valid amount (> 0)');
       return;
     }
-    if (!category) {
+    if (!categoriesLoaded && !categoriesFailed) {
+      setError('Đang tải danh mục, vui lòng chờ.');
+      return;
+    }
+    if (!category || !allCategories.some(c => c.id === category && (c.type === type || c.type === 'both'))) {
       setError(language === 'vi' ? 'Vui lòng chọn danh mục' : 'Please select a category');
       return;
     }
@@ -113,9 +154,18 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
     }
   };
 
+  // A category may become inactive while the form is open.
+  useEffect(() => {
+    if (!isOpen || (!categoriesLoaded && !categoriesFailed)) return;
+    if (!allCategories.some(c => c.id === category && c.type === type)) {
+      setCategory(allCategories.find(c => c.type === type)?.id || '');
+    }
+  }, [isOpen, categoriesLoaded, categoriesFailed, commonCategories, category, type]);
+
   if (!isOpen) return null;
 
-  const filteredCategories = CATEGORIES.filter(c => c.type === 'both' || c.type === type);
+  const filteredCategories = allCategories.filter(c => c.type === 'both' || c.type === type);
+
 
   return (
     <div

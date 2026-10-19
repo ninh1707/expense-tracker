@@ -9,13 +9,19 @@ import {
   X,
   Check,
   ShieldAlert,
-  BellRing
+  BellRing,
+  Search,
+  Filter,
+  Wallet,
+  TrendingUp,
+  ListFilter
 } from 'lucide-react';
 import { IBudget } from '../../types';
 import { api } from '../../services/api';
 import { CATEGORIES, formatCurrency, getCategoryById } from '../../utils/categories';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import { CategoryIcon } from '../common/CategoryIcon';
 
 interface BudgetsViewProps {
   currency: string;
@@ -33,6 +39,10 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
 
   const [budgets, setBudgets] = useState<IBudget[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'warning' | 'exceeded' | 'unused'>('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(
     new Date().toISOString().substring(0, 7)
   );
@@ -136,241 +146,132 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     }
   };
 
-  // Aggregated totals
-  const totalBudgeted = budgets.reduce((sum, b) => sum + b.amount, 0);
-  const totalSpent = budgets.reduce((sum, b) => sum + (b.spent || 0), 0);
-  const overallPercentage = totalBudgeted > 0 ? Math.round((totalSpent / totalBudgeted) * 100) : 0;
+  // Phần trình bày và bộ lọc dùng cùng dữ liệu API. Không sửa công thức ở backend.
+  const totalBudgeted = budgets.reduce((sum, budget) => sum + budget.amount, 0);
+  const totalSpent = budgets.reduce((sum, budget) => sum + (budget.spent ?? 0), 0);
+  const remainingBudget = Math.max(0, totalBudgeted - totalSpent);
+  const percentOf = (budget: IBudget) => budget.amount > 0 ? (budget.spent ?? 0) / budget.amount * 100 : 0;
+  const warningsCount = budgets.filter(budget => percentOf(budget) >= (budget.alertThreshold || 80)).length;
+  const selectableCategories: string[] = Array.from(
+    new Set<string>(budgets.map(b => String(b.category ?? '')).filter(Boolean))
+  );
+  const filterOptions: { id: typeof statusFilter; title: string }[] = [
+    { id: 'all', title: 'Tất cả' },
+    { id: 'active', title: 'Đang chi tiêu' },
+    { id: 'warning', title: 'Gần vượt' },
+    { id: 'exceeded', title: 'Đã vượt' },
+    { id: 'unused', title: 'Chưa sử dụng' }
+  ];
+  const visibleBudgets = budgets.filter(budget => {
+    const percent = percentOf(budget);
+    const spent = budget.spent ?? 0;
+    const name = getCategoryById(budget.category);
+    const q = searchQuery.trim().toLocaleLowerCase('vi');
+    const matchesText = !q || [name.labelVi, name.labelEn, budget.notes ?? ''].some(text => text.toLocaleLowerCase('vi').includes(q));
+    const matchesCategory = categoryFilter === 'all' || budget.category === categoryFilter;
+    const matchesStatus = statusFilter === 'all'
+      || (statusFilter === 'active' && spent > 0 && percent < (budget.alertThreshold || 80))
+      || (statusFilter === 'warning' && percent >= (budget.alertThreshold || 80) && percent < 100)
+      || (statusFilter === 'exceeded' && percent >= 100)
+      || (statusFilter === 'unused' && spent === 0);
+    return matchesText && matchesCategory && matchesStatus;
+  });
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      {/* Header */}
+    <div className="ft-page ft-budgets space-y-5 animate-in fade-in duration-200">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            {t('bgt.title')}
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            {t('bgt.subtitle')}
-          </p>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Quản lý Ngân sách</h2>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">Lập kế hoạch chi tiêu và theo dõi ngân sách theo từng danh mục</p>
         </div>
+        <button type="button" onClick={openCreateModal} className="ft-primary-button flex items-center justify-center gap-2 text-sm font-bold px-4 py-2.5 self-start sm:self-auto">
+          <Plus className="w-4 h-4" /> Thêm ngân sách mới
+        </button>
+      </div>
 
-        <div className="flex items-center gap-2">
-          {/* Month selector */}
-          <input
-            type="month"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-emerald-500"
-          />
-
-          <button
-            onClick={openCreateModal}
-            className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-sm shadow-emerald-600/20 transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{t('bgt.add_new')}</span>
+      {/* Thanh lọc và tìm kiếm giống ảnh tham khảo; tháng được gửi trực tiếp vào API. */}
+      <section aria-label="Tìm kiếm và lọc ngân sách" className="ft-panel p-4 sm:p-5 space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="relative flex-1 min-w-[210px]">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input aria-label="Tìm kiếm ngân sách" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Tìm kiếm theo tên danh mục, ghi chú..." className="ft-search-input w-full pl-10 pr-3 py-2.5 text-sm" />
+          </label>
+          <button type="button" onClick={() => setShowAdvancedFilter(show => !show)} aria-expanded={showAdvancedFilter} className="ft-secondary-button flex items-center gap-2 px-3 py-2.5 text-xs font-semibold">
+            <Filter className="w-4 h-4" /> Bộ lọc nâng cao
           </button>
         </div>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5 flex-wrap" role="group" aria-label="Trạng thái ngân sách">
+            <span className="text-[11px] font-semibold text-slate-500 mr-1">Trạng thái:</span>
+            {filterOptions.map(option => (
+              <button type="button" key={option.id} onClick={() => setStatusFilter(option.id)} aria-pressed={statusFilter === option.id}
+                className={`ft-filter-chip ${statusFilter === option.id ? 'ft-filter-chip-active' : ''}`}>
+                {option.title}
+              </button>
+            ))}
+          </div>
+          <label className="flex items-center gap-2 text-xs text-slate-500">
+            <span className="hidden sm:inline">Tháng</span>
+            <input aria-label="Chọn tháng ngân sách" type="month" value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)} className="ft-search-input px-3 py-2 text-xs font-semibold" />
+          </label>
+        </div>
+        {showAdvancedFilter && (
+          <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100">
+            <ListFilter className="w-4 h-4 text-emerald-600" />
+            <label htmlFor="budget-category-filter" className="text-xs font-semibold text-slate-600">Danh mục</label>
+            <select id="budget-category-filter" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="ft-search-input min-w-[190px] px-3 py-2 text-xs">
+              <option value="all">Tất cả danh mục</option>
+              {selectableCategories.map(id => <option key={id} value={id}>{getCategoryById(id).labelVi}</option>)}
+            </select>
+            <button type="button" className="text-xs text-emerald-700 font-semibold px-3 py-2" onClick={() => {setSearchQuery(''); setCategoryFilter('all'); setStatusFilter('all');}}>Xóa bộ lọc</button>
+          </div>
+        )}
+      </section>
+
+      <div className="ft-budget-stats" aria-label="Tổng quan ngân sách">
+        <div className="ft-budget-stat-card"><div><p className="ft-stat-label">TỔNG NGÂN SÁCH</p><strong className="ft-budget-value text-emerald-600">{formatCurrency(totalBudgeted, currency)}</strong><p className="ft-stat-caption">Trong tháng này</p></div><span className="ft-budget-stat-icon bg-emerald-50 text-emerald-600"><Wallet size={20}/></span></div>
+        <div className="ft-budget-stat-card"><div><p className="ft-stat-label">ĐÃ SỬ DỤNG</p><strong className="ft-budget-value text-slate-900">{formatCurrency(totalSpent, currency)}</strong><p className="ft-stat-caption">{totalBudgeted ? (totalSpent / totalBudgeted * 100).toFixed(1).replace('.', ',') : '0'}% tổng ngân sách</p></div><span className="ft-budget-stat-icon bg-blue-50 text-blue-600"><PieChartIcon size={20}/></span></div>
+        <div className="ft-budget-stat-card"><div><p className="ft-stat-label">CÒN LẠI</p><strong className="ft-budget-value text-emerald-600">{formatCurrency(remainingBudget, currency)}</strong><p className="ft-stat-caption">{totalBudgeted ? (remainingBudget / totalBudgeted * 100).toFixed(1).replace('.', ',') : '0'}% tổng ngân sách</p></div><span className="ft-budget-stat-icon bg-emerald-50 text-emerald-600"><TrendingUp size={20}/></span></div>
+        <div className="ft-budget-stat-card"><div><p className="ft-stat-label">CẢNH BÁO</p><strong className={`ft-budget-value ${warningsCount ? 'text-orange-600' : 'text-slate-900'}`}>{warningsCount} danh mục</strong><p className="ft-stat-caption">Đạt ngưỡng cảnh báo</p></div><span className="ft-budget-stat-icon bg-amber-50 text-amber-600"><BellRing size={20}/></span></div>
       </div>
 
-      {/* Monthly Budget Summary Banner */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div>
-            <h3 className="font-bold text-slate-900 text-base">
-              Tổng ngân sách tháng {selectedMonth}
-            </h3>
-            <p className="text-xs text-slate-500">
-              Đã chi {formatCurrency(totalSpent, currency)} / {formatCurrency(totalBudgeted, currency)}
-            </p>
-          </div>
-          <div className="text-right">
-            <span
-              className={`text-2xl font-black ${
-                overallPercentage >= 100
-                  ? 'text-rose-600'
-                  : overallPercentage >= 80
-                  ? 'text-amber-600'
-                  : 'text-emerald-600'
-              }`}
-            >
-              {overallPercentage}%
-            </span>
-            <span className="text-xs text-slate-400 block font-medium">Hạn mức đã dùng</span>
-          </div>
-        </div>
-
-        <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-200">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ${
-              overallPercentage >= 100
-                ? 'bg-rose-500'
-                : overallPercentage >= 80
-                ? 'bg-amber-500'
-                : 'bg-emerald-500'
-            }`}
-            style={{ width: `${Math.min(100, overallPercentage)}%` }}
-          />
-        </div>
-
-        <div className="flex justify-between items-center text-xs text-slate-600 font-semibold mt-2.5">
-          <span>Còn lại: {formatCurrency(Math.max(0, totalBudgeted - totalSpent), currency)}</span>
-          <span className="flex items-center gap-1 text-[11px] text-slate-500">
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
-            Hệ thống tự động cảnh báo khi chi tiêu đạt ngưỡng
-          </span>
-        </div>
-      </div>
-
-      {/* Budgets Grid */}
       {isLoading ? (
-        <div className="py-16 text-center text-slate-400">
-          <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-          <p className="text-xs">{t('common.loading')}</p>
-        </div>
+        <div className="py-16 text-center text-slate-500"><div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />{t('common.loading')}</div>
       ) : budgets.length === 0 ? (
-        <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center text-slate-400">
-          <PieChartIcon className="w-12 h-12 mx-auto mb-3 opacity-40 text-emerald-600" />
-          <p className="text-sm font-bold text-slate-700">{t('bgt.no_budgets')}</p>
-          <button
-            onClick={openCreateModal}
-            className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors"
-          >
-            {t('bgt.add_new')}
-          </button>
-        </div>
+        <div className="ft-panel p-12 text-center text-slate-500"><PieChartIcon className="w-11 h-11 mx-auto mb-3 text-emerald-600 opacity-50" /><p className="font-semibold">Chưa có ngân sách trong tháng này</p><button type="button" className="ft-primary-button mt-4 px-4 py-2.5 text-sm" onClick={openCreateModal}>Tạo ngân sách đầu tiên</button></div>
+      ) : visibleBudgets.length === 0 ? (
+        <div className="ft-panel p-8 text-center text-slate-500"><p className="font-semibold">Không có ngân sách khớp bộ lọc.</p><button type="button" onClick={() => {setSearchQuery('');setCategoryFilter('all');setStatusFilter('all');}} className="text-emerald-700 font-semibold mt-3 text-sm">Đặt lại bộ lọc</button></div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {budgets.map((b) => {
-            const cat = getCategoryById(b.category);
-            const percent = b.percentage || 0;
-            const isExceeded = b.status === 'exceeded';
-            const isWarning = b.status === 'warning';
-
+        <div className="space-y-3">
+          {visibleBudgets.map(budget => {
+            const cat = getCategoryById(budget.category);
+            const spent = budget.spent ?? 0;
+            const percentage = percentOf(budget);
+            const remaining = Math.max(0, budget.amount - spent);
+            const exceeded = percentage >= 100;
+            const warning = !exceeded && percentage >= (budget.alertThreshold || 80);
             return (
-              <div
-                key={b._id}
-                className={`bg-white rounded-2xl p-5 border transition-all duration-200 shadow-xs flex flex-col justify-between ${
-                  isExceeded
-                    ? 'border-rose-300 ring-1 ring-rose-200'
-                    : isWarning
-                    ? 'border-amber-300 ring-1 ring-amber-200'
-                    : 'border-slate-200'
-                }`}
-              >
-                <div>
-                  {/* Top Bar: Icon, Name & Status */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-white font-bold text-sm shadow-xs"
-                        style={{ backgroundColor: cat.color }}
-                      >
-                        {cat.labelVi.charAt(0)}
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="font-bold text-slate-900 text-sm truncate">
-                          {language === 'vi' ? cat.labelVi : cat.labelEn}
-                        </h4>
-                        <span className="text-[10px] text-slate-400">
-                          Cảnh báo ở mức {b.alertThreshold}%
-                        </span>
-                      </div>
-                    </div>
-
-                    <span
-                      className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1 ${
-                        isExceeded
-                          ? 'bg-rose-100 text-rose-700'
-                          : isWarning
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-emerald-100 text-emerald-700'
-                      }`}
-                    >
-                      {isExceeded ? (
-                        <>
-                          <AlertTriangle className="w-3 h-3" />
-                          <span>Vượt {percent - 100}%</span>
-                        </>
-                      ) : isWarning ? (
-                        <>
-                          <BellRing className="w-3 h-3" />
-                          <span>Cảnh báo</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-3 h-3" />
-                          <span>An toàn</span>
-                        </>
-                      )}
-                    </span>
-                  </div>
-
-                  {/* Numbers */}
-                  <div className="flex items-baseline justify-between text-xs mt-3 mb-1.5">
-                    <span className="text-slate-500">
-                      Đã chi: <strong className="text-slate-900">{formatCurrency(b.spent || 0, currency)}</strong>
-                    </span>
-                    <span className="text-slate-500">
-                      Hạn mức: <strong className="text-slate-900">{formatCurrency(b.amount, currency)}</strong>
-                    </span>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        isExceeded
-                          ? 'bg-rose-500'
-                          : isWarning
-                          ? 'bg-amber-500'
-                          : 'bg-emerald-500'
-                      }`}
-                      style={{ width: `${Math.min(100, percent)}%` }}
-                    />
-                  </div>
-
-                  {/* Remaining / Exceeded text */}
-                  <p className="text-[11px] font-medium mt-2">
-                    {isExceeded ? (
-                      <span className="text-rose-600">
-                        Đã vượt quá hạn mức {formatCurrency(Math.abs((b.remaining || 0)), currency)}
-                      </span>
-                    ) : (
-                      <span className="text-slate-500">
-                        Còn lại có thể chi:{' '}
-                        <strong className="text-emerald-700">
-                          {formatCurrency(b.remaining || 0, currency)}
-                        </strong>
-                      </span>
-                    )}
-                  </p>
-
-                  {b.notes && (
-                    <p className="text-[11px] text-slate-400 italic mt-2 line-clamp-2">
-                      &quot;{b.notes}&quot;
-                    </p>
-                  )}
+              <article key={budget._id} className="ft-budget-row ft-panel">
+                <div className="ft-budget-row-heading">
+                  <CategoryIcon categoryId={budget.category} className="ft-budget-category-icon" size={22} />
+                  <div className="min-w-0"><h3 className="text-sm font-extrabold text-slate-900">{language === 'vi' ? cat.labelVi : cat.labelEn}</h3><p className="text-[11px] text-slate-400 mt-1">{budget.notes || `Cảnh báo khi sử dụng ${budget.alertThreshold || 80}% hạn mức`}</p></div>
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-1 pt-3 mt-4 border-t border-slate-100">
-                  <button
-                    onClick={() => openEditModal(b)}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-semibold flex items-center gap-1"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                    <span>Sửa</span>
-                  </button>
-                  <button
-                    onClick={() => handleDeleteBudget(b._id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-semibold flex items-center gap-1"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>Xóa</span>
-                  </button>
+                <div className="ft-budget-row-values">
+                  <div><span>Ngân sách</span><strong>{formatCurrency(budget.amount, currency)}</strong></div>
+                  <div><span>Đã sử dụng</span><strong className={exceeded ? 'text-rose-600' : 'text-emerald-600'}>{formatCurrency(spent, currency)}</strong></div>
+                  <div><span>Còn lại</span><strong className="text-emerald-600">{formatCurrency(remaining, currency)}</strong></div>
                 </div>
-              </div>
+                <div className="ft-budget-row-status">
+                  <span className={`ft-status-pill ${exceeded ? 'ft-status-danger' : warning ? 'ft-status-warning' : 'ft-status-ok'}`}>
+                    {exceeded ? `Đã vượt ${Math.max(0, Math.round(percentage - 100))}%` : warning ? 'Gần vượt' : 'Đang chi tiêu'}
+                  </span>
+                  <div className="flex gap-1"><button type="button" onClick={() => openEditModal(budget)} aria-label={`Sửa ngân sách ${cat.labelVi}`} className="ft-icon-button"><Edit size={15} /><span>Sửa</span></button><button type="button" onClick={() => handleDeleteBudget(budget._id)} aria-label={`Xóa ngân sách ${cat.labelVi}`} className="ft-icon-button hover:text-rose-600"><Trash2 size={15}/><span>Xóa</span></button></div>
+                </div>
+                <div className="ft-budget-row-progress">
+                  <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden flex-1"><div className={`h-full rounded-full transition-all ${exceeded || warning ? 'bg-rose-400' : 'bg-emerald-500'}`} style={{width:`${Math.max(0, Math.min(100, percentage))}%`}} /></div>
+                  <span className="text-[11px] font-semibold text-slate-500">{Math.round(percentage)}%</span>
+                </div>
+              </article>
             );
           })}
         </div>

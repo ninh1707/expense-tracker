@@ -69,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <span className="font-bold text-slate-900 text-lg tracking-tight flex items-center gap-1.5">
-                FinTrack <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold uppercase tracking-wider">VN</span>
+                FinTrack <span className="text-emerald-600">VN</span>
               </span>
               <p className="text-[11px] text-slate-500 -mt-0.5 hidden sm:block font-medium">
                 Quản lý chi tiêu thông minh

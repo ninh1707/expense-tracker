@@ -1,1 +1,246 @@
 @import "tailwindcss";
+
+/* FinTrack VN UI design system. Presentation only; do not change handlers or business state. */
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --ft-primary: #059669;
+  --ft-primary-hover: #047857;
+  --ft-primary-soft: #ecfdf5;
+  --ft-success: #059669;
+  --ft-danger: #e11d48;
+  --ft-danger-soft: #fff1f2;
+  --ft-info: #2563eb;
+  --ft-info-soft: #eff6ff;
+  --ft-warning: #d97706;
+  --ft-warning-soft: #fffbeb;
+  --ft-ink: #14213c;
+  --ft-muted: #64748b;
+  --ft-canvas: #f6f9fc;
+  --ft-surface: #ffffff;
+  --ft-border: #e2e8f0;
+  --ft-space-1: 4px;
+  --ft-space-2: 8px;
+  --ft-space-3: 12px;
+  --ft-space-4: 16px;
+  --ft-space-6: 24px;
+  --ft-space-8: 32px;
+  --ft-radius-sm: 8px;
+  --ft-radius-md: 12px;
+  --ft-radius-lg: 16px;
+  --ft-radius-xl: 20px;
+  --ft-shadow-sm: 0 2px 8px rgba(15, 23, 42, .035);
+  --ft-shadow-md: 0 4px 14px rgba(15, 23, 42, .055), 0 16px 32px rgba(15, 23, 42, .025);
+  --ft-shadow-lg: 0 22px 60px rgba(15, 23, 42, .12);
+}
+
+html, body, #root { min-width: 320px; min-height: 100%; }
+html { background: var(--ft-canvas); }
+body { margin: 0; background: var(--ft-canvas); color: var(--ft-ink); }
+
+:where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) {
+  color: var(--ft-ink);
+  background: var(--ft-canvas);
+  accent-color: var(--ft-primary);
+}
+:where(.fintrack-ui, .fintrack-admin-ui) main {
+  min-width: 0;
+  background: radial-gradient(ellipse at 90% 0%, rgba(16,185,129,.045), transparent 37%), var(--ft-canvas);
+}
+:where(.fintrack-ui, .fintrack-admin-ui) aside {
+  background: var(--ft-surface);
+  box-shadow: 5px 0 24px rgba(21,40,65,.025);
+}
+:where(.fintrack-ui, .fintrack-admin-ui) aside nav button {
+  min-height: 44px;
+  border-radius: var(--ft-radius-md);
+}
+:where(.fintrack-ui, .fintrack-admin-ui) aside nav button:hover { background-color: var(--ft-primary-soft); }
+:where(.fintrack-ui, .fintrack-admin-ui) aside nav button[class*="bg-emerald-50"] {
+  background-color: #e7f8f0;
+  color: var(--ft-primary-hover);
+}
+:where(.fintrack-ui, .fintrack-admin-ui) :is(h1,h2,h3) {
+  letter-spacing: -.025em;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+:where(.fintrack-ui, .fintrack-admin-ui) :is(h1) { font-weight: 800; }
+:where(.fintrack-ui, .fintrack-admin-ui) :is(h2,h3) { font-weight: 700; }
+
+/* Component surfaces — use original Tailwind classes and DOM, only normalize presentation. */
+:where(.fintrack-ui, .fintrack-admin-ui) :is(.rounded-2xl,.rounded-xl).bg-white {
+  border-color: var(--ft-border);
+  box-shadow: var(--ft-shadow-md);
+}
+:where(.fintrack-ui, .fintrack-admin-ui) .shadow-sm { box-shadow: var(--ft-shadow-sm); }
+:where(.fintrack-ui, .fintrack-admin-ui) table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+:where(.fintrack-ui, .fintrack-admin-ui) thead { background-color: #f3f7fb; }
+:where(.fintrack-ui, .fintrack-admin-ui) th { color: #53657d; font-weight: 700; }
+:where(.fintrack-ui, .fintrack-admin-ui) tbody tr:hover { background-color: #f6fafc; }
+:where(.fintrack-ui, .fintrack-admin-ui) :is(button,input,select,textarea) {
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+:where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) :is(button,input,select,textarea,a):focus-visible {
+  outline: 2px solid var(--ft-primary);
+  outline-offset: 2px;
+}
+:where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) button:disabled,
+:where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) :is(input,select,textarea):disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+:where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) :is(input,select,textarea) {
+  max-width: 100%;
+  min-width: 0;
+}
+:where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) :is(input,textarea)::placeholder { color: #94a3b8; }
+:where(.fintrack-ui, .fintrack-admin-ui) :is(.overflow-x-auto,.min-w-0) { min-width: 0; }
+
+/* Limit Recharts selectors to sizing only. Its SVG colors and marks are controlled by chart data. */
+:where(.fintrack-ui, .fintrack-admin-ui) .recharts-responsive-container { min-width: 0; max-width: 100%; }
+:where(.fintrack-ui, .fintrack-admin-ui) .recharts-wrapper { max-width: 100%; }
+:where(.fintrack-ui, .fintrack-admin-ui) .recharts-surface { display: block; }
+
+.fintrack-auth-shell { background: radial-gradient(ellipse at 18% 48%, #e3f9ed 0%, transparent 48%), var(--ft-canvas); }
+.fintrack-auth-shell .rounded-3xl.bg-white { border: 1px solid var(--ft-border); box-shadow: var(--ft-shadow-lg); }
+
+@media (min-width: 1024px) {
+  :where(.fintrack-ui, .fintrack-admin-ui) main { padding: 26px 32px; }
+}
+@media (max-width: 1023px) {
+  :where(.fintrack-ui, .fintrack-admin-ui) main { padding: 20px 16px; }
+}
+@media (max-width: 640px) {
+  :where(.fintrack-ui, .fintrack-admin-ui) main { padding: 16px 12px; }
+  :where(.fintrack-ui, .fintrack-admin-ui) table { font-size: .8rem; }
+  :where(.fintrack-ui, .fintrack-admin-ui) :is(button,input,select,textarea) { touch-action: manipulation; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) *,
+  :where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) *::before,
+  :where(.fintrack-ui, .fintrack-admin-ui, .fintrack-auth-shell) *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* FinTrack 2026: reusable visual vocabulary for all screens, including admin.
+   Styles only — no changes to API handlers, authentication or derived financial figures. */
+:where(.fintrack-ui, .fintrack-admin-ui) {
+  --ft-primary: #059669;
+  --ft-primary-hover: #047857;
+  --ft-canvas: #f7f9fc;
+  --ft-border: #e3eaf1;
+}
+:where(.fintrack-ui, .fintrack-admin-ui) main > .ft-page,
+:where(.fintrack-ui, .fintrack-admin-ui) main > div { max-width: 1440px; margin-left: auto; margin-right: auto; }
+:where(.fintrack-ui, .fintrack-admin-ui) main h2 { font-size: clamp(1.35rem, 1.6vw, 1.8rem); font-weight: 800; color:#102039; }
+:where(.fintrack-ui, .fintrack-admin-ui) :is(.rounded-2xl,.rounded-xl).bg-white {
+  border: 1px solid var(--ft-border); box-shadow: 0 3px 12px rgba(18,45,68,.04);
+}
+:where(.fintrack-ui, .fintrack-admin-ui) :is(button,select,input,textarea) { font-family:inherit; }
+:where(.fintrack-ui, .fintrack-admin-ui) button.bg-emerald-600 { background:#059669; box-shadow: 0 3px 8px rgba(5,150,105,.13); }
+:where(.fintrack-ui, .fintrack-admin-ui) button.bg-emerald-600:hover { background:#047857; }
+:where(.fintrack-ui, .fintrack-admin-ui) aside { border-color:var(--ft-border); }
+:where(.fintrack-ui, .fintrack-admin-ui) th { color:#66758a; }
+.ft-summary-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.ft-stat-card { display:flex; align-items:center; gap:16px; background:#fff; border:1px solid var(--ft-border); border-radius:18px; padding:20px; min-width:0; box-shadow:var(--ft-shadow-sm); }
+.ft-stat-icon { width:48px; height:48px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; border-radius:16px; }
+.ft-stat-label { font-weight:700; color:#627087; font-size:.82rem; }
+.ft-stat-value { font-size:clamp(1.2rem,1.65vw,1.7rem); font-weight:800; color:#15233b; letter-spacing:-.03em; line-height:1.35; overflow-wrap:anywhere; display:block; }
+.ft-stat-caption { color:#8793a7; font-size:.75rem; line-height:1.4; }
+.ft-section-heading { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; }
+.ft-section-heading h3 { font-size:1.05rem; font-weight:800; color:#17263c; }
+.ft-section-heading span { font-size:.8rem; color:#718099; }
+.ft-goal-card { min-width:0; }
+.ft-goal-card > div:first-child { min-width:0; }
+.ft-goal-card .truncate { white-space:normal; }
+.ft-goal-card .bg-slate-100.h-2\.5 { background:#eaf0f4; }
+.ft-recurring-list > div { min-width:0; }
+.ft-filters { display:grid; grid-template-columns:minmax(0,1fr) minmax(140px,190px) minmax(140px,190px); align-items:center; gap:12px; padding:14px; background:white; border:1px solid var(--ft-border); border-radius:16px; box-shadow:var(--ft-shadow-sm); }
+.ft-filters input,.ft-filters select { width:100%; background:#f9fbfd; border:1px solid var(--ft-border); border-radius:12px; padding:11px 12px; font-size:.85rem; color:#273955; outline-color:var(--ft-primary); }
+.ft-empty-filter { background:#fff; color:#64748b; text-align:center; padding:24px; border:1px dashed #d7e0eb; border-radius:16px; }
+.ft-settings > div.bg-white { height:100%; margin:0; }
+.ft-settings > div:last-child { grid-column: 1 / -1; }
+.ft-settings input:not([type=checkbox]), .ft-settings select { background:#fbfcfe; }
+.ft-settings h3 { color:#17263c; }
+@media(max-width:1100px) {
+  .ft-summary-grid {grid-template-columns:1fr 1fr;}
+}
+@media(max-width:760px) {
+  .ft-summary-grid,.ft-filters {grid-template-columns:1fr;}
+  .ft-stat-card {padding:15px;}
+  .ft-recurring-list {grid-template-columns:1fr;}
+  .ft-goal-card {padding:16px;}
+}
+
+/* FinTrack VN – giao diện đồng bộ từ bộ ảnh tham chiếu 19/10/2026.
+ * Không sử dụng số liệu tĩnh: bộ lọc và thẻ thống kê đọc trực tiếp từ API. */
+.ft-panel { background: #fff; border: 1px solid #e5ebf2; border-radius: 17px; box-shadow: 0 2px 10px rgba(17,36,60,.035); min-width: 0; }
+.ft-primary-button { background: #059669; border-radius: 11px; color: white; box-shadow: 0 4px 12px rgba(5,150,105,.14); transition: background .15s, transform .15s; }
+.ft-primary-button:hover { background: #047857; }
+.ft-primary-button:active { transform: scale(.99); }
+.ft-secondary-button { background:#fff; border: 1px solid #e4eaf2; border-radius: 11px; color: #4b5c72; }
+.ft-secondary-button:hover { background: #f5f9fb; }
+.ft-search-input { outline:none; color:#314158; background:#f8fafc; border:1px solid #e4ebf2; border-radius:11px; }
+.ft-search-input:focus { border-color:#34b98b; box-shadow:0 0 0 3px rgba(52,185,139,.1); }
+.ft-filter-chip { font-size: 11px; padding: 7px 11px; background: #f4f6fa; color:#596780; border-radius:7px; font-weight:700; white-space:nowrap; transition: background .15s; }
+.ft-filter-chip:hover { background: #e6f5ec; color: #047857; }
+.ft-filter-chip-active, .ft-filter-chip-active:hover { background:#059669; color:#fff; }
+.ft-budget-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:13px; }
+.ft-budget-stat-card { border:1px solid #e4ebf2; background:white; border-radius:15px; padding:17px 15px; display:flex; gap:9px; justify-content:space-between; align-items:center; min-width:0; box-shadow:0 2px 10px rgba(17,36,60,.035); }
+.ft-budget-value { display:block; font-size:clamp(1rem,1.32vw,1.32rem); line-height:1.35; letter-spacing:-.035em; font-weight:850; overflow-wrap:anywhere; }
+.ft-budget-stat-icon { display:flex; flex-shrink:0; border-radius:11px; width:39px; height:39px; align-items:center; justify-content:center; }
+.ft-budget-row { padding:15px 18px; display:grid; grid-template-columns:minmax(190px,1.6fr) minmax(300px,2.1fr) minmax(155px,1fr); gap:12px 22px; align-items:center; }
+.ft-budget-row-heading { display:flex; align-items:center; gap:12px; min-width:0; }
+.ft-budget-category-icon { height:43px; width:43px; flex:0 0 43px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; }
+.ft-budget-row-values { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:14px; }
+.ft-budget-row-values span {display:block; color:#8390a5; font-size:11px; font-weight:600; margin-bottom:4px; }
+.ft-budget-row-values strong {display:block; color:#14213c; font-size:12px; font-weight:800; overflow-wrap:anywhere; }
+.ft-budget-row-status {display:flex; flex-direction:column; align-items:flex-end; gap:7px; }
+.ft-status-pill {font-size:10px; font-weight:800; padding:5px 9px; border-radius:9px; white-space:nowrap; }
+.ft-status-ok {background:#e3f8ed; color:#047857; }
+.ft-status-warning {background:#fff2dc; color:#b45309; }
+.ft-status-danger {background:#ffe8ed; color:#e11d48; }
+.ft-icon-button {display:inline-flex; gap:4px; align-items:center; padding:5px; font-size:11px; color:#64748b; border-radius:7px; }
+.ft-icon-button:hover {background:#f1f5f9; }
+.ft-budget-row-progress {grid-column:2 / 3; display:flex; align-items:center; gap:9px; margin-top:-6px; }
+.ft-budget-row-progress span {min-width:36px; text-align:right; }
+.ft-budgets .ft-panel:hover {border-color:#d4e4eb; }
+.ft-savings .ft-goal-card {box-shadow:0 2px 10px rgba(17,36,60,.035); }
+.ft-savings .ft-summary-grid, .ft-recurring .ft-summary-grid {gap:13px;}
+.ft-savings .ft-stat-card, .ft-recurring .ft-stat-card {padding:18px; border-radius:15px;}
+.ft-savings .ft-stat-value, .ft-recurring .ft-stat-value {font-size:1.35rem;}
+.ft-recurring-table-wrap { box-shadow:0 2px 10px rgba(17,36,60,.035); }
+.ft-recurring-table-wrap :is(th,td) { vertical-align: middle; }
+.fintrack-ui main > .ft-page {max-width:1350px; }
+.fintrack-ui main > div:not(.ft-page) {max-width:1350px; }
+.fintrack-ui .rounded-3xl {border-radius:19px;}
+@media(max-width:1190px) {
+ .ft-budget-stats {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .ft-budget-row {grid-template-columns:minmax(180px,1fr) minmax(270px,1.5fr);}
+ .ft-budget-row-status {grid-column:1 / 3; flex-direction:row; justify-content:space-between; align-items:center;}
+ .ft-budget-row-progress {grid-column:2 / 3; grid-row:2; margin-top:0;}
+}
+@media(max-width:730px) {
+ .ft-budget-row {grid-template-columns:1fr; gap:15px;}
+ .ft-budget-row-heading,.ft-budget-row-values,.ft-budget-row-progress,.ft-budget-row-status {grid-column:1; grid-row:auto;}
+ .ft-budget-row-progress {margin-top:0;}
+ .ft-budget-row-status {justify-content:space-between;}
+ .ft-budget-row-values {gap:8px;}
+ .ft-budget-stat-card {padding:14px;}
+ .ft-budget-stat-icon {width:34px;height:34px;}
+}
+@media(max-width:420px) {
+ .ft-budget-stats {grid-template-columns:1fr;}
+ .ft-budget-row-values {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
